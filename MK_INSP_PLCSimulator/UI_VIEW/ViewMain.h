@@ -61,6 +61,7 @@ private:
 	void InitListInspContent();
 	void InitListInfoHeader();
 	void InitListInfoContent();
+	void SendCmd(BYTE cCh, BYTE cOpCode, BYTE cField, int nValue);
 protected:
 	afx_msg void OnSendCamDir();
 	afx_msg void OnSendBarWidth();

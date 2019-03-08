@@ -166,10 +166,13 @@ void CViewMain::InitUI()
 	InitListInfoContent();
 
 	//init value
-	m_xUi[UI_CB_EVENT].pCB->SetItemData(0, FIELD_INSP_TRIGGER);
-	m_xUi[UI_CB_EVENT].pCB->SetItemData(1, FIELD_INSP_VERIFY2);
+
 	m_xUi[UI_CB_EVENT].pCB->AddString(LoadResourceString(IDS_INSPTRIGGER));
 	m_xUi[UI_CB_EVENT].pCB->AddString(LoadResourceString(IDS_INSPVERIFY));
+	m_xUi[UI_CB_EVENT].pCB->SetItemData(0, FIELD_INSP_TRIGGER);
+	m_xUi[UI_CB_EVENT].pCB->SetItemData(1, FIELD_INSP_VERIFY2);
+
+
 	m_xUi[UI_CB_EVENT].pCB->SetCurSel(0);
 
 	m_xUi[UI_RADIO_CAMDIR_LEFT].pBtn->SetCheck(TRUE);
@@ -320,6 +323,21 @@ void CViewMain::InitListInfoContent()
 	}
 }
 
+void CViewMain::SendCmd(BYTE cCh, BYTE cOpCode, BYTE cField, int nValue)
+{
+	PLC_CMD_FIELD_BODY xBody;
+	memset(&xBody, 0, sizeof(PLC_CMD_FIELD_BODY));
+	xBody.cCh = cCh; 
+	xBody.cOpCode = cOpCode; // 4­Ó bit , «Ý½T»{
+	xBody.cField = cField;
+
+	memcpy(&xBody.wValue, &nValue, sizeof(xBody.wValue));
+
+	if (m_pServer){
+		m_pServer->SendData(CMDTYPE_OP, (BYTE*)&xBody);
+	}
+}
+
 BEGIN_MESSAGE_MAP(CViewMain, CWnd)
 	ON_BN_CLICKED(UI_BTN_CAMDIR, OnSendCamDir)
 	ON_BN_CLICKED(UI_BTN_BARWIDTH, OnSendBarWidth)
@@ -328,19 +346,34 @@ END_MESSAGE_MAP()
 
 void CViewMain::OnSendCamDir()
 {
-	
+	if (!m_xUi[UI_RADIO_CAMDIR_LEFT].pBtn || !m_xUi[UI_RADIO_CAMDIR_RIGHT].pBtn)
+		return;
+
+	BOOL bLeft = m_xUi[UI_RADIO_CAMDIR_LEFT].pBtn->GetCheck();
+
+	SendCmd(CAMERA_SIDE, OPCODE_SET, FIELD_CAM_DIR, bLeft);
 }
 
 void CViewMain::OnSendBarWidth()
 {
+	if (!m_xUi[UI_EDIT_BARWIDTH].pEdit)
+		return;
+
+	CString strBarWidth;
+	m_xUi[UI_EDIT_BARWIDTH].pEdit->GetWindowText(strBarWidth);
+	if (!strBarWidth.GetLength())
+		return;
+
+	SendCmd(CAMERA_ALL, OPCODE_SET, FIELD_BAR_WIDTH, _ttoi(strBarWidth));
 }
 
 void CViewMain::OnSendEvent()
 {
-	PLC_CMD_FIELD_BODY xBody;
-	memset(&xBody, 0, sizeof(PLC_CMD_FIELD_BODY));
-	xBody.cCh = 0x0F;
-	xBody.cOpCode = 0x01;
-	//xBody.cField = ;
+	if (!m_xUi[UI_CB_EVENT].pCB)
+		return;
+
+	int nEventID = m_xUi[UI_CB_EVENT].pCB->GetItemData(m_xUi[UI_CB_EVENT].pCB->GetCurSel());
+
+	SendCmd(CAMERA_ALL, OPCODE_SET, *(BYTE*)&nEventID, NULL);
 }
 

@@ -1,5 +1,19 @@
 #pragma once
 
+#define CMD_START	0x40 //@
+#define CMD_END		0x23 //#
+
+#define CMDTYPE_QUERYALIVE	0x01	// 1 ==> Query Alive Command
+#define CMDTYPE_OP			0x02	// 2 ==> Field Op Command
+
+#define CAMERA_ROLL		0x00
+#define CAMERA_OP		0x01
+#define CAMERA_SIDE		0x02
+#define CAMERA_ALL		0x0F
+
+#define OPCODE_QUERY	0x00
+#define OPCODE_SET		0x01
+
 #pragma pack(push) /* push current alignment to stack */
 #pragma pack(1) /* set alignment to 1 byte boundary */
 typedef struct PLC_CMDEX_PACKET_{
@@ -43,4 +57,4 @@ enum FIELD_ID_{
 	FIELD_VERIFY_READY,			//通知PLC端 Verify Golden Ready
 	FIELD_INSP_TRIGGER,			//通知系統 進行檢測
 	FIELD_INSP_VERIFY2			//通知系統 進行2次校驗
-}FIELD_ID;
+};

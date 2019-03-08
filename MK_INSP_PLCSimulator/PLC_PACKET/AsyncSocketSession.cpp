@@ -13,6 +13,7 @@ CAsyncSocketSession::~CAsyncSocketSession()
 
 void CAsyncSocketSession::Init()
 {
+	m_pINotify = NULL;
 	m_nReceiveSize = 0;
 	m_nSendSize = 0;
 	memset(m_cReceiveBuf, 0, sizeof(m_cReceiveBuf));
@@ -22,9 +23,9 @@ void CAsyncSocketSession::Init()
 
 void CAsyncSocketSession::OnClose(int nErrorCode)
 {
-	//if (m_pINotify){
-	//	m_pINotify->OnError(this, ERR_SDK_SOCKET_CLOSE, NULL);
-	//}
+	if (m_pINotify){
+		m_pINotify->OnError(this, ISessionNotify::ERR_SDK_SOCKET_CLOSE, NULL);
+	}
 	CAsyncSocket::OnClose(nErrorCode);
 }
 

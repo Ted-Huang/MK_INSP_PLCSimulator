@@ -101,6 +101,8 @@
   <ItemGroup>
     <ClInclude Include="MK_INSP_PLCSimulator.h" />
     <ClInclude Include="MK_INSP_PLCSimulatorDlg.h" />
+    <ClInclude Include="PLC_PACKET\AsyncSocketServer.h" />
+    <ClInclude Include="PLC_PACKET\AsyncSocketSession.h" />
     <ClInclude Include="PLC_PACKET\PLC_PACKET_const.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SharedComponent\AoiFont.h" />
@@ -111,6 +113,8 @@
   <ItemGroup>
     <ClCompile Include="MK_INSP_PLCSimulator.cpp" />
     <ClCompile Include="MK_INSP_PLCSimulatorDlg.cpp" />
+    <ClCompile Include="PLC_PACKET\AsyncSocketServer.cpp" />
+    <ClCompile Include="PLC_PACKET\AsyncSocketSession.cpp" />
     <ClCompile Include="SharedComponent\AoiFont.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

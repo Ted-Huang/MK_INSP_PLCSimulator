@@ -48,6 +48,12 @@
     <ClInclude Include="SharedComponent\AoiFont.h">
       <Filter>SharedComponent</Filter>
     </ClInclude>
+    <ClInclude Include="PLC_PACKET\AsyncSocketServer.h">
+      <Filter>PLC_PACKET</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC_PACKET\AsyncSocketSession.h">
+      <Filter>PLC_PACKET</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MK_INSP_PLCSimulator.cpp">
@@ -64,6 +70,12 @@
     </ClCompile>
     <ClCompile Include="SharedComponent\AoiFont.cpp">
       <Filter>SharedComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="PLC_PACKET\AsyncSocketServer.cpp">
+      <Filter>PLC_PACKET</Filter>
+    </ClCompile>
+    <ClCompile Include="PLC_PACKET\AsyncSocketSession.cpp">
+      <Filter>PLC_PACKET</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

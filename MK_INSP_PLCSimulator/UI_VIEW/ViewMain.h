@@ -44,6 +44,7 @@ typedef struct UI_OBJ_{
 	}
 }UI_OBJ;
 
+class CAsyncSocketServer;
 class CViewMain : public CWnd{
 public:
 	CViewMain(RECT &rcTarget, CWnd *pParent, UINT ResourceId);
@@ -130,4 +131,5 @@ private:
 		UI_ROW_MAX
 	};
 	UI_OBJ m_xUi[UI_ITEM_END];
+	CAsyncSocketServer* m_pServer;
 };

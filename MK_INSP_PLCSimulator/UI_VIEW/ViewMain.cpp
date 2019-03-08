@@ -3,24 +3,31 @@
 #include "ViewMain.h"
 #include "AoiFont.h"
 #include "PLC_PACKET\PLC_PACKET_const.h"
+#include "PLC_PACKET\AsyncSocketServer.h"
 
 CViewMain::CViewMain(RECT &rcTarget, CWnd *pParent, UINT ResourceId)
 {
+	
 	Init();
 	Create(NULL, _T("CViewMain"), WS_CHILD | WS_VISIBLE, rcTarget, pParent, ResourceId);
 	InitUiRectPos();
 	InitUI();
-	//TRACE("%d \n", sizeof(PLC_CMD_FIELD_BODY));
 }
 
 CViewMain::~CViewMain()
 {
 	DestroyUI();
+	if (m_pServer){
+		delete m_pServer;
+		m_pServer = NULL;
+	}
 }
 
 void CViewMain::Init()
 {
 	memset(m_xUi, 0, sizeof(m_xUi));
+	m_pServer = new CAsyncSocketServer;
+	m_pServer->Start();
 }
 
 void CViewMain::InitUiRectPos()

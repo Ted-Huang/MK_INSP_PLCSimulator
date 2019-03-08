@@ -13,7 +13,7 @@
 
 #define OPCODE_QUERY	0x00
 #define OPCODE_SET		0x01
-#define OPCODE_OPCODE	0x02
+#define OPCODE_ECHO		0x02
 
 #pragma pack(push) /* push current alignment to stack */
 #pragma pack(1) /* set alignment to 1 byte boundary */

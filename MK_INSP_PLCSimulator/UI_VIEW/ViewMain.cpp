@@ -61,10 +61,18 @@ void CViewMain::InitUiRectPos()
 			ptSize = { 70, 20 };
 			nCaptionID = IDS_CAMDIR;
 			break;
+		case UI_lABEL_CAMDIR_RESP:
+			ptBase = { 350, 30 };
+			ptSize = { 150, 20 };
+			break;
 		case UI_LABEL_BARWIDTH:
 			ptBase = { 30, 80 };
 			ptSize = { 70, 20 };
 			nCaptionID = IDS_BARWIDTH;
+			break;
+		case UI_lABEL_BARWIDTH_RESP:
+			ptBase = { 350, 80 };
+			ptSize = { 150, 20 };
 			break;
 		case UI_LABEL_EVENT:
 			ptBase = { 30, 130 };
@@ -176,9 +184,9 @@ void CViewMain::InitUI()
 
 	m_xUi[UI_RADIO_CAMDIR_LEFT].pBtn->SetCheck(TRUE);
 
-	//CString strMsg;
-	//strMsg.Format(L"Listening Port: %d", PLC_PORT);
-	//SetWindowText(strMsg);
+	CString strMsg;
+	strMsg.Format(L"Listening Port: %d", PLC_PORT);
+	SetWindowText(strMsg);
 }
 
 void CViewMain::DestroyUI()
@@ -357,9 +365,10 @@ END_MESSAGE_MAP()
 
 void CViewMain::OnSendCamDir()
 {
-	if (!m_xUi[UI_RADIO_CAMDIR_LEFT].pBtn || !m_xUi[UI_RADIO_CAMDIR_RIGHT].pBtn)
+	if (!m_xUi[UI_RADIO_CAMDIR_LEFT].pBtn || !m_xUi[UI_RADIO_CAMDIR_RIGHT].pBtn || !m_xUi[UI_lABEL_CAMDIR_RESP].pLabel)
 		return;
 
+	m_xUi[UI_lABEL_CAMDIR_RESP].pLabel->SetWindowText(L"setting...");
 	BOOL bRight = m_xUi[UI_RADIO_CAMDIR_RIGHT].pBtn->GetCheck();
 
 	SendCmd(CAMERA_SIDE, OPCODE_SET, FIELD_CAM_DIR, bRight);
@@ -367,9 +376,9 @@ void CViewMain::OnSendCamDir()
 
 void CViewMain::OnSendBarWidth()
 {
-	if (!m_xUi[UI_EDIT_BARWIDTH].pEdit)
+	if (!m_xUi[UI_EDIT_BARWIDTH].pEdit || !m_xUi[UI_lABEL_BARWIDTH_RESP].pLabel)
 		return;
-
+	m_xUi[UI_lABEL_BARWIDTH_RESP].pLabel->SetWindowText(L"setting...");
 	CString strBarWidth;
 	m_xUi[UI_EDIT_BARWIDTH].pEdit->GetWindowText(strBarWidth);
 	if (!strBarWidth.GetLength())
@@ -396,7 +405,22 @@ void CViewMain::DoSessionErrorNotify(void *pInstance, long ErrorId)
 }
 
 void CViewMain::DoSessionReceivePacket(void *pInstance, PLC_CMD_FIELD_BODY* pBody)
-{
+{ 
+	if (pBody){
+		switch (pBody->cField){
+		case FIELD_CAM_DIR:
+			if (pBody->cOpCode == OPCODE_ECHO)
+				m_xUi[UI_lABEL_CAMDIR_RESP].pLabel->SetWindowText(L"set CAM_DIR done");
+			break;
+		case FIELD_BAR_WIDTH:
+			if (pBody->cOpCode == OPCODE_ECHO)
+				m_xUi[UI_lABEL_BARWIDTH_RESP].pLabel->SetWindowText(L"set BAR_WIDTH done");
+			break;
+		default:
+			break;
+		}
+		delete pBody;
+	}
 
 }
 

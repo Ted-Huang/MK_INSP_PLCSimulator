@@ -75,7 +75,7 @@ void CAsyncSocketSession::MovePacketToStart(BYTE **ppCurrent, int &DataSize)
 	if (ppCurrent && (*ppCurrent) && DataSize){
 		BYTE *pPtr = *ppCurrent;
 		long nNewSize = DataSize;
-		while ((*(DWORD*)(pPtr)) != CMD_START){
+		while ((*(BYTE*)(pPtr)) != CMD_START){
 			if (nNewSize <= 0){
 				break;
 			}

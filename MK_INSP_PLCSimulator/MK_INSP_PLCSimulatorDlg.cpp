@@ -6,6 +6,7 @@
 #include "MK_INSP_PLCSimulator.h"
 #include "MK_INSP_PLCSimulatorDlg.h"
 #include "afxdialogex.h"
+#include "UI_VIEW\ViewMain.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -20,6 +21,15 @@ CMK_INSP_PLCSimulatorDlg::CMK_INSP_PLCSimulatorDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CMK_INSP_PLCSimulatorDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+}
+
+CMK_INSP_PLCSimulatorDlg::~CMK_INSP_PLCSimulatorDlg()
+{
+	if (m_pMain){
+		m_pMain->DestroyWindow();
+		delete m_pMain;
+		m_pMain = NULL;
+	}
 }
 
 void CMK_INSP_PLCSimulatorDlg::DoDataExchange(CDataExchange* pDX)
@@ -45,7 +55,7 @@ BOOL CMK_INSP_PLCSimulatorDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 設定小圖示
 
 	// TODO:  在此加入額外的初始設定
-
+	Init();
 	return TRUE;  // 傳回 TRUE，除非您對控制項設定焦點
 }
 
@@ -85,3 +95,13 @@ HCURSOR CMK_INSP_PLCSimulatorDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+void CMK_INSP_PLCSimulatorDlg::Init()
+{
+	if (m_pMain == NULL){
+		RECT rcTarget;
+		GetClientRect(&rcTarget);
+		
+		m_pMain = new CViewMain(rcTarget, this, 1);
+	}
+}

@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="UI_VIEW">
+      <UniqueIdentifier>{f369c70d-ccb8-44ae-bf39-0f1e2c9ecd48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PLC_PACKET">
+      <UniqueIdentifier>{72beb5d7-972e-4f27-a096-542b75063b5b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MK_INSP_PLCSimulator.h">
@@ -30,6 +36,12 @@
     <ClInclude Include="Resource.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
+    <ClInclude Include="UI_VIEW\ViewMain.h">
+      <Filter>UI_VIEW</Filter>
+    </ClInclude>
+    <ClInclude Include="PLC_PACKET\PLC_PACKET_const.h">
+      <Filter>PLC_PACKET</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MK_INSP_PLCSimulator.cpp">
@@ -40,6 +52,9 @@
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>原始程式檔</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_VIEW\ViewMain.cpp">
+      <Filter>UI_VIEW</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

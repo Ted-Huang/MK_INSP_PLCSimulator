@@ -4,13 +4,14 @@
 
 #pragma once
 
-
+class CViewMain;
 // CMK_INSP_PLCSimulatorDlg 對話方塊
 class CMK_INSP_PLCSimulatorDlg : public CDialogEx
 {
 // 建構
 public:
 	CMK_INSP_PLCSimulatorDlg(CWnd* pParent = NULL);	// 標準建構函式
+	~CMK_INSP_PLCSimulatorDlg();
 
 // 對話方塊資料
 	enum { IDD = IDD_MK_INSP_PLCSIMULATOR_DIALOG };
@@ -28,4 +29,8 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+private:
+	void Init();
+private:
+	CViewMain* m_pMain;
 };

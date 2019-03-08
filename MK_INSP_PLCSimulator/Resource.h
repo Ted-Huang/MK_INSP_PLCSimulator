@@ -5,6 +5,8 @@
 #define IDR_MAINFRAME					128
 #define IDD_MK_INSP_PLCSIMULATOR_DIALOG				102
 
+
+#define IDS_TEST	1000
 // 下一個新增物件的預設值
 //
 #ifdef APSTUDIO_INVOKED

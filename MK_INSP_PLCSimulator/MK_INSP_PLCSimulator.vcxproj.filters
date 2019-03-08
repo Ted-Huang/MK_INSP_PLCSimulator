@@ -19,6 +19,9 @@
     <Filter Include="PLC_PACKET">
       <UniqueIdentifier>{72beb5d7-972e-4f27-a096-542b75063b5b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SharedComponent">
+      <UniqueIdentifier>{42f25577-da79-437a-9220-da5bf29137c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MK_INSP_PLCSimulator.h">
@@ -42,6 +45,9 @@
     <ClInclude Include="PLC_PACKET\PLC_PACKET_const.h">
       <Filter>PLC_PACKET</Filter>
     </ClInclude>
+    <ClInclude Include="SharedComponent\AoiFont.h">
+      <Filter>SharedComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MK_INSP_PLCSimulator.cpp">
@@ -55,6 +61,9 @@
     </ClCompile>
     <ClCompile Include="UI_VIEW\ViewMain.cpp">
       <Filter>UI_VIEW</Filter>
+    </ClCompile>
+    <ClCompile Include="SharedComponent\AoiFont.cpp">
+      <Filter>SharedComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

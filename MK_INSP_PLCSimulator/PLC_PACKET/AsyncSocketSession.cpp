@@ -13,7 +13,6 @@ CAsyncSocketSession::~CAsyncSocketSession()
 
 void CAsyncSocketSession::Init()
 {
-	m_pINotify = NULL;
 	m_nReceiveSize = 0;
 	m_nSendSize = 0;
 	memset(m_cReceiveBuf, 0, sizeof(m_cReceiveBuf));
@@ -23,9 +22,8 @@ void CAsyncSocketSession::Init()
 
 void CAsyncSocketSession::OnClose(int nErrorCode)
 {
-	if (m_pINotify){
-		m_pINotify->OnError(this, ISessionNotify::ERR_SDK_SOCKET_CLOSE, NULL);
-	}
+	OnSessionErrorNotify(this, ERR_SDK_SOCKET_CLOSE);
+	
 	CAsyncSocket::OnClose(nErrorCode);
 }
 
@@ -54,25 +52,74 @@ void CAsyncSocketSession::OnReceive(int nErrorCode)
 		CheckDataBuf();
 	}
 	else{
-		if (m_pINotify){
-			m_pINotify->OnError(this, ISessionNotify::ERR_SDK_SOCKET_CLOSE, NULL);
-		}
+		OnSessionErrorNotify(this, ERR_SDK_SOCKET_CLOSE);
 	}
 	CAsyncSocket::OnReceive(nErrorCode);
 }
+
 void CAsyncSocketSession::CheckDataBuf()
 {
-	//BYTE *pStart = m_cDataBuf;
-	//MovePacketToStart(&pStart, m_nDataSize);
-	//AOI_SYNC_PACKET_HEADER *pHdr = (AOI_SYNC_PACKET_HEADER*)m_cDataBuf;
-	//int nCmdPacketSize = sizeof(AOI_SYNC_PACKET_HEADER) + pHdr->nSize + 1; //Header+BodySize+CheckSum
-	//while ((m_nDataSize >= sizeof(AOI_SYNC_PACKET_HEADER)) && (m_nDataSize >= nCmdPacketSize)){
-	//	ParseCommand((BYTE*)pHdr, nCmdPacketSize);
-	//	pHdr = (AOI_SYNC_PACKET_HEADER*)((BYTE*)pHdr + nCmdPacketSize);
-	//	m_nDataSize -= nCmdPacketSize;
-	//	nCmdPacketSize = sizeof(AOI_SYNC_PACKET_HEADER) + pHdr->nSize + 1;
-	//}
+	BYTE *pStart = m_cReceiveBuf;
+	MovePacketToStart(&pStart, m_nReceiveSize);
+	PLC_CMDEX_PACKET *pPacket = (PLC_CMDEX_PACKET*)m_cReceiveBuf;
+	int nCmdPacketSize = sizeof(PLC_CMDEX_PACKET);
+	while ((m_nReceiveSize >= sizeof(PLC_CMDEX_PACKET)) && (m_nReceiveSize >= nCmdPacketSize)){
+		ParseCommand(pPacket);
+		pPacket = (PLC_CMDEX_PACKET*)((BYTE*)pPacket + nCmdPacketSize);
+		m_nReceiveSize -= nCmdPacketSize;
+	}
 }
+
+void CAsyncSocketSession::MovePacketToStart(BYTE **ppCurrent, int &DataSize)
+{
+	if (ppCurrent && (*ppCurrent) && DataSize){
+		BYTE *pPtr = *ppCurrent;
+		long nNewSize = DataSize;
+		while ((*(DWORD*)(pPtr)) != CMD_START){
+			if (nNewSize <= 0){
+				break;
+			}
+			pPtr++;
+			nNewSize--;
+		}
+		long nOffset = DataSize - nNewSize;
+		if (nOffset >0){
+			//Move Memory & Clear Memory
+			memmove(*ppCurrent, pPtr, nNewSize);
+			memset(*ppCurrent + nNewSize, 0, nOffset);
+			DataSize = nNewSize;
+		}
+	}
+}
+
+bool CAsyncSocketSession::ParseCommand(PLC_CMDEX_PACKET *pData)
+{
+	bool bFlag = false;
+	if (SyncPacketCheck(pData)){
+		switch (pData->cCmdType){
+		case CMDTYPE_QUERYALIVE:
+			TRACE("igonre query alive cmd \n");
+			break;
+		case CMDTYPE_OP:
+			{
+				PLC_CMD_FIELD_BODY* pBody = new PLC_CMD_FIELD_BODY;
+				memcpy(pBody, pData->cBody, sizeof(PLC_CMD_FIELD_BODY));
+				OnSessionReceivePacket(this, pBody);
+			}
+			break;
+		default:
+			TRACE("Unknown Command Type! \n");
+			break;
+		}
+	}
+	return bFlag;
+}
+
+bool CAsyncSocketSession::SyncPacketCheck(PLC_CMDEX_PACKET* pData)
+{
+	return pData->cStart == CMD_START && pData->cEnd == CMD_END;
+}
+
 void CAsyncSocketSession::OnSend(int nErrorCode)
 {
 	while (m_nSendSize >0){

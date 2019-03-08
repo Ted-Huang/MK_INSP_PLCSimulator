@@ -6,7 +6,7 @@ using namespace std;
 #define PLC_PORT	9999
 
 
-class CAsyncSocketServer : public CAsyncSocket, public ISessionNotify
+class CAsyncSocketServer : public CAsyncSocket, public ISESSION_NOTIFY
 {
 public:
 	CAsyncSocketServer();
@@ -17,8 +17,9 @@ public:
 protected:
 	virtual void OnAccept(int nErrorCode);
 
-	//ISessionNotify
-	virtual void OnError(void *pInstance, long ErrorId, long ErrorData);
+public:
+	//ISESSION_NOTIFY
+	virtual void DoSessionErrorNotify(void *pInstance, long ErrorId);
 private:
 	void Init();
 	void Finalize();

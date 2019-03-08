@@ -1,5 +1,6 @@
 #pragma once
-
+#include "PLC_PACKET\PLC_PACKET_const.h"
+#include "PLC_PACKET\AsyncSocketSession.h"
 typedef struct UI_OBJ_{  
 	RECT rcUi;
 	UINT nID;
@@ -45,7 +46,7 @@ typedef struct UI_OBJ_{
 }UI_OBJ;
 
 class CAsyncSocketServer;
-class CViewMain : public CWnd{
+class CViewMain : public CWnd, public ISESSION_NOTIFY{
 public:
 	CViewMain(RECT &rcTarget, CWnd *pParent, UINT ResourceId);
 	~CViewMain();
@@ -68,6 +69,9 @@ protected:
 	afx_msg void OnSendBarWidth();
 	afx_msg void OnSendEvent();
 	DECLARE_MESSAGE_MAP()
+protected:
+	virtual void DoSessionErrorNotify(void *pInstance, long ErrorId);
+	virtual void DoSessionReceivePacket(void *pInstance, PLC_CMD_FIELD_BODY* pBody);
 private:
 	enum{
 		UI_ITEM_BEGIN,

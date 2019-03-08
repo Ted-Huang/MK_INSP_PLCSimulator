@@ -2,7 +2,6 @@
 #include "Resource.h"
 #include "ViewMain.h"
 #include "AoiFont.h"
-#include "PLC_PACKET\PLC_PACKET_const.h"
 #include "PLC_PACKET\AsyncSocketServer.h"
 
 CViewMain::CViewMain(RECT &rcTarget, CWnd *pParent, UINT ResourceId)
@@ -27,6 +26,7 @@ void CViewMain::Init()
 	memset(m_xUi, 0, sizeof(m_xUi));
 	m_pServer = new CAsyncSocketServer;
 	m_pServer->Start();
+	m_pServer->AttachNotify(this);
 }
 
 void CViewMain::InitUiRectPos()
@@ -175,6 +175,10 @@ void CViewMain::InitUI()
 	m_xUi[UI_CB_EVENT].pCB->SetCurSel(0);
 
 	m_xUi[UI_RADIO_CAMDIR_LEFT].pBtn->SetCheck(TRUE);
+
+	//CString strMsg;
+	//strMsg.Format(L"Listening Port: %d", PLC_PORT);
+	//SetWindowText(strMsg);
 }
 
 void CViewMain::DestroyUI()
@@ -382,5 +386,17 @@ void CViewMain::OnSendEvent()
 	int nEventID = m_xUi[UI_CB_EVENT].pCB->GetItemData(m_xUi[UI_CB_EVENT].pCB->GetCurSel());
 
 	SendCmd(CAMERA_ALL, OPCODE_SET, *(BYTE*)&nEventID, NULL);
+}
+
+void CViewMain::DoSessionErrorNotify(void *pInstance, long ErrorId)
+{
+	if (m_pServer){
+		m_pServer->DoSessionErrorNotify(pInstance, ErrorId);
+	}
+}
+
+void CViewMain::DoSessionReceivePacket(void *pInstance, PLC_CMD_FIELD_BODY* pBody)
+{
+
 }
 

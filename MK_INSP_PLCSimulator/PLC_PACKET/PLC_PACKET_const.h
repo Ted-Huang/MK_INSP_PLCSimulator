@@ -13,6 +13,7 @@
 
 #define OPCODE_QUERY	0x00
 #define OPCODE_SET		0x01
+#define OPCODE_OPCODE	0x02
 
 #pragma pack(push) /* push current alignment to stack */
 #pragma pack(1) /* set alignment to 1 byte boundary */
@@ -32,7 +33,7 @@ typedef struct PLC_CMDEX_ALIVE_BODY_{
 
 typedef struct PLC_CMD_FIELD_BODY_{ //4 Byte
 	BYTE cCh : 4;					//0==>ROLL,1==>OP,2==>SIDE,15==>ALL
-	BYTE cOpCode : 4;				//0==>Query,1==>Set
+	BYTE cOpCode : 4;				//0==>Query,1==>Set,2==>echo
 	BYTE cField;					//FIELD_ID
 	WORD wValue;
 }PLC_CMD_FIELD_BODY;

@@ -55,15 +55,14 @@ void CAsyncSocketServer::OnAccept(int nErrorCode)
 	CAsyncSocketSession* pSession = new CAsyncSocketSession;
 	m_vSession.push_back(pSession);
 	Accept(*pSession);
-
 	pSession->AttachNotify(this);
 }
 
-void CAsyncSocketServer::OnError(void *pInstance, long ErrorId, long ErrorData)
+void CAsyncSocketServer::DoSessionErrorNotify(void *pInstance, long ErrorId)
 {
 	if (!pInstance)
 		return;
-
+	
 	auto it = m_vSession.begin();
 	while (it != m_vSession.end()){
 		if (*it && *it == pInstance){

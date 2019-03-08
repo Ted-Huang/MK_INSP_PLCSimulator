@@ -70,6 +70,11 @@ void CViewMain::InitUiRectPos()
 			ptSize = { 70, 20 };
 			nCaptionID = IDS_INSPRESULT;
 			break;
+		case UI_LABEL_OTHERINFORMATION:
+			ptBase = { 30, 300 };
+			ptSize = { 70, 20 };
+			nCaptionID = IDS_OTHERINFORMATION;
+			break;
 			//EDIT
 		case UI_EDIT_BARWIDTH:
 			ptBase = { 130, 80 };
@@ -92,7 +97,15 @@ void CViewMain::InitUiRectPos()
 			ptSize = { 120, 25 };
 			nCaptionID = IDS_RIGHT;
 			break;
-
+			//LIST
+		case UI_LIST_INSP:
+			ptBase = { 130, 180 };
+			ptSize = { 300, 100 };
+			break;
+		case UI_LIST_INFO:
+			ptBase = { 130, 300 };
+			ptSize = { 820, 100 };
+			break;
 		}
 		m_xUi[x].rcUi = { ptBase.x, ptBase.y, ptBase.x + ptSize.x, ptBase.y + ptSize.y };
 		m_xUi[x].nID = x;
@@ -133,6 +146,18 @@ void CViewMain::InitUI()
 		m_xUi[x].pBtn->Create(LoadResourceString(m_xUi[x].nCaptionID), WS_VISIBLE | WS_CHILD | BS_AUTORADIOBUTTON, m_xUi[x].rcUi, this, m_xUi[x].nID);
 		g_AoiFont.SetWindowFont(m_xUi[x].pBtn, FontDef::typeT1);
 	}
+	//LIST
+	for (int x = UI_LIST_BEGIN; x < UI_LIST_END; x++){
+		m_xUi[x].pList = new CListCtrl();
+		m_xUi[x].pList->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | LVS_REPORT , m_xUi[x].rcUi, this, m_xUi[x].nID);
+		m_xUi[x].pList->SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
+		g_AoiFont.SetWindowFont(m_xUi[x].pBtn, FontDef::typeT1);
+	}
+	InitListInspHeader();
+	InitListInspContent();
+	InitListInfoHeader();
+	InitListInfoContent();
+
 	//init value
 	m_xUi[UI_CB_EVENT].pCB->SetItemData(0, FIELD_INSP_TRIGGER);
 	m_xUi[UI_CB_EVENT].pCB->SetItemData(1, FIELD_INSP_VERIFY2);
@@ -177,6 +202,14 @@ void CViewMain::DestroyUI()
 			m_xUi[x].pEdit = NULL;
 		}
 	}
+	//LIST
+	for (int x = UI_LIST_BEGIN; x < UI_LIST_END; x++){
+		if (m_xUi[x].pList){
+			m_xUi[x].pList->DestroyWindow();
+			delete m_xUi[x].pList;
+			m_xUi[x].pList = NULL;
+		}
+	}
 	//RADIO
 	for (int x = UI_RADIO_BEGIN; x < UI_RADIO_END; x++){
 		if (m_xUi[x].pBtn){
@@ -194,3 +227,113 @@ CString CViewMain::LoadResourceString(UINT nID)
 
 	return str;
 }
+
+void CViewMain::InitListInspHeader()
+{
+	if (!m_xUi[UI_LIST_INSP].pList)
+		return;
+	CListCtrl* pList = m_xUi[UI_LIST_INSP].pList;
+	CHeaderCtrl* pHdrCtrl = pList->GetHeaderCtrl();
+	pList->InsertColumn(UI_FIELD_INSP_CAMERA, LoadResourceString(IDS_CAMERA), LVCFMT_CENTER, 50);
+	pList->InsertColumn(UI_FIELD_INSP_RESULT, LoadResourceString(IDS_RESULT), LVCFMT_CENTER, 50);
+	pList->InsertColumn(UI_FIELD_INSP_INSPTIME, LoadResourceString(IDS_INSPTIME), LVCFMT_CENTER, 100);
+	pList->InsertColumn(UI_FIELD_INSP_IMGRCVTIME, LoadResourceString(IDS_IMGRCVTIME), LVCFMT_CENTER, 100);
+
+}
+
+void CViewMain::InitListInspContent()
+{
+	if (!m_xUi[UI_LIST_INSP].pList)
+		return;
+
+	CListCtrl* pList = m_xUi[UI_LIST_INSP].pList;
+	int nRowStrId;
+
+	for (int x = 0; x < UI_ROW_MAX; x++){
+		switch (x)
+		{
+		case UI_ROW_ROLL:
+		default:
+			nRowStrId = IDS_ROLL;
+			break;
+		case UI_ROW_OP:
+			nRowStrId = IDS_OP;
+			break;
+		case UI_ROW_SIDE:
+			nRowStrId = IDS_SIDE;
+			break;
+		}
+		pList->InsertItem(x, LoadResourceString(nRowStrId));
+	/*	pList->SetItemText(x, UI_FIELD_INSP_RESULT, L"");
+		pList->SetItemText(x, UI_FIELD_INSP_INSPTIME, L"");
+		pList->SetItemText(x, UI_FIELD_INSP_IMGRCVTIME, L"");*/
+	}
+
+}
+
+void CViewMain::InitListInfoHeader()
+{
+	if (!m_xUi[UI_LIST_INFO].pList)
+		return;
+
+	CListCtrl* pList = m_xUi[UI_LIST_INFO].pList;
+	pList->InsertColumn(UI_FIELD_INFO_CAMERA, LoadResourceString(IDS_CAMERA), LVCFMT_CENTER, 50);
+	pList->InsertColumn(UI_FIELD_INFO_CAMSTATUS, LoadResourceString(IDS_CAMSTATUS), LVCFMT_CENTER, 80);
+	pList->InsertColumn(UI_FIELD_INFO_VERIFY, LoadResourceString(IDS_VERIFY), LVCFMT_CENTER, 100);
+	pList->InsertColumn(UI_FIELD_INFO_SOLL, LoadResourceString(IDS_SOLL), LVCFMT_CENTER, 80);
+	pList->InsertColumn(UI_FIELD_INFO_GOLDEN_READY, LoadResourceString(IDS_GOLDEN_READY), LVCFMT_CENTER, 100);
+	pList->InsertColumn(UI_FIELD_INFO_VERIFY_GOLDEN_READY, LoadResourceString(IDS_VERIFY_GOLDEN_READY), LVCFMT_CENTER, 150);
+	pList->InsertColumn(UI_FIELD_INFO_GOLDEN_RESET, LoadResourceString(IDS_GOLDEN_RESET), LVCFMT_CENTER, 100);
+	pList->InsertColumn(UI_FIELD_INFO_VERIFY_GOLDEN_RESET, LoadResourceString(IDS_VERIFY_GOLDEN_RESET), LVCFMT_CENTER, 150);
+}
+
+void CViewMain::InitListInfoContent()
+{
+	if (!m_xUi[UI_LIST_INFO].pList)
+		return;
+
+	CListCtrl* pList = m_xUi[UI_LIST_INFO].pList;
+	int nRowStrId;
+
+	for (int x = 0; x < UI_ROW_MAX; x++){
+		switch (x)
+		{
+		case UI_ROW_ROLL:
+		default:
+			nRowStrId = IDS_ROLL;
+			break;
+		case UI_ROW_OP:
+			nRowStrId = IDS_OP;
+			break;
+		case UI_ROW_SIDE:
+			nRowStrId = IDS_SIDE;
+			break;
+		}
+		pList->InsertItem(x, LoadResourceString(nRowStrId));
+	}
+}
+
+BEGIN_MESSAGE_MAP(CViewMain, CWnd)
+	ON_BN_CLICKED(UI_BTN_CAMDIR, OnSendCamDir)
+	ON_BN_CLICKED(UI_BTN_BARWIDTH, OnSendBarWidth)
+	ON_BN_CLICKED(UI_BTN_EVENT, OnSendEvent)
+END_MESSAGE_MAP()
+
+void CViewMain::OnSendCamDir()
+{
+	
+}
+
+void CViewMain::OnSendBarWidth()
+{
+}
+
+void CViewMain::OnSendEvent()
+{
+	PLC_CMD_FIELD_BODY xBody;
+	memset(&xBody, 0, sizeof(PLC_CMD_FIELD_BODY));
+	xBody.cCh = 0x0F;
+	xBody.cOpCode = 0x01;
+	//xBody.cField = ;
+}
+

@@ -338,7 +338,7 @@ void CViewMain::SendCmd(BYTE cCh, BYTE cOpCode, BYTE cField, int nValue)
 
 	memcpy(&xBody.wValue, &nValue, sizeof(xBody.wValue));
 
-	xBody.wValue = SWAP(xBody.wValue); //change to Big-Endian
+	//xBody.wValue = SWAP(xBody.wValue); //change to Big-Endian
 
 	if (m_pServer){
 		m_pServer->SendData(CMDTYPE_OP, (BYTE*)&xBody);

@@ -7,7 +7,6 @@
 
 CViewMain::CViewMain(RECT &rcTarget, CWnd *pParent, UINT ResourceId)
 {
-	
 	Init();
 	Create(NULL, _T("CViewMain"), WS_CHILD | WS_VISIBLE, rcTarget, pParent, ResourceId);
 	InitUiRectPos();
@@ -323,15 +322,23 @@ void CViewMain::InitListInfoContent()
 	}
 }
 
+WORD CViewMain::SWAP(WORD tData)
+{
+	WORD tRet = ((tData & 0xFF00) >> 8) | ((tData & 0xFF) << 8);
+	return tRet;
+};
+
 void CViewMain::SendCmd(BYTE cCh, BYTE cOpCode, BYTE cField, int nValue)
 {
 	PLC_CMD_FIELD_BODY xBody;
 	memset(&xBody, 0, sizeof(PLC_CMD_FIELD_BODY));
 	xBody.cCh = cCh; 
-	xBody.cOpCode = cOpCode; // 4­Ó bit , «Ý½T»{
+	xBody.cOpCode = cOpCode;
 	xBody.cField = cField;
 
 	memcpy(&xBody.wValue, &nValue, sizeof(xBody.wValue));
+
+	xBody.wValue = SWAP(xBody.wValue); //change to Big-Endian
 
 	if (m_pServer){
 		m_pServer->SendData(CMDTYPE_OP, (BYTE*)&xBody);
@@ -349,9 +356,9 @@ void CViewMain::OnSendCamDir()
 	if (!m_xUi[UI_RADIO_CAMDIR_LEFT].pBtn || !m_xUi[UI_RADIO_CAMDIR_RIGHT].pBtn)
 		return;
 
-	BOOL bLeft = m_xUi[UI_RADIO_CAMDIR_LEFT].pBtn->GetCheck();
+	BOOL bRight = m_xUi[UI_RADIO_CAMDIR_RIGHT].pBtn->GetCheck();
 
-	SendCmd(CAMERA_SIDE, OPCODE_SET, FIELD_CAM_DIR, bLeft);
+	SendCmd(CAMERA_SIDE, OPCODE_SET, FIELD_CAM_DIR, bRight);
 }
 
 void CViewMain::OnSendBarWidth()

@@ -51,11 +51,28 @@ void CAsyncSocketSession::OnReceive(int nErrorCode)
 		break;
 	}
 	if (bSuccess){
-		//CheckDataBuf();
+		CheckDataBuf();
+	}
+	else{
+		if (m_pINotify){
+			m_pINotify->OnError(this, ISessionNotify::ERR_SDK_SOCKET_CLOSE, NULL);
+		}
 	}
 	CAsyncSocket::OnReceive(nErrorCode);
 }
-
+void CAsyncSocketSession::CheckDataBuf()
+{
+	//BYTE *pStart = m_cDataBuf;
+	//MovePacketToStart(&pStart, m_nDataSize);
+	//AOI_SYNC_PACKET_HEADER *pHdr = (AOI_SYNC_PACKET_HEADER*)m_cDataBuf;
+	//int nCmdPacketSize = sizeof(AOI_SYNC_PACKET_HEADER) + pHdr->nSize + 1; //Header+BodySize+CheckSum
+	//while ((m_nDataSize >= sizeof(AOI_SYNC_PACKET_HEADER)) && (m_nDataSize >= nCmdPacketSize)){
+	//	ParseCommand((BYTE*)pHdr, nCmdPacketSize);
+	//	pHdr = (AOI_SYNC_PACKET_HEADER*)((BYTE*)pHdr + nCmdPacketSize);
+	//	m_nDataSize -= nCmdPacketSize;
+	//	nCmdPacketSize = sizeof(AOI_SYNC_PACKET_HEADER) + pHdr->nSize + 1;
+	//}
+}
 void CAsyncSocketSession::OnSend(int nErrorCode)
 {
 	while (m_nSendSize >0){

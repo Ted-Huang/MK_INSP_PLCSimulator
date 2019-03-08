@@ -37,15 +37,12 @@ void CAsyncSocketServer::SendData(BYTE cCmdType, BYTE* pData)
 	memcpy(xPacket.cBody, pData, sizeof(PLC_CMD_FIELD_BODY));
 	xPacket.cEnd = CMD_END;
 
-	BYTE* pTest = (BYTE*)&xPacket;
-	//for (int x = 0; x < 7; x++){
-	//	TRACE("\n %d  ", *(pTest + x));
-	//}
 	auto it = m_vSession.begin();
 	while (it != m_vSession.end()){
 		if (*it){
 			(*it)->Send(&xPacket, sizeof(PLC_CMDEX_PACKET));
 		}
+		it++;
 	}
 }
 
@@ -75,6 +72,7 @@ void CAsyncSocketServer::OnError(void *pInstance, long ErrorId, long ErrorData)
 			m_vSession.erase(it);
 			break;
 		}
+		it++;
 	}
 }
 
@@ -95,6 +93,7 @@ void CAsyncSocketServer::Finalize()
 		if (pSession){
 			pSession->Close();
 			delete pSession;
+			pSession = NULL;
 		}
 		m_vSession.pop_back();
 	}

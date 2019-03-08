@@ -32,7 +32,7 @@ protected:
 private:
 	void Init();
 	void Finalize();
-
+	void CheckDataBuf();
 private:
 	ISessionNotify* m_pINotify;
 	int m_nReceiveSize;

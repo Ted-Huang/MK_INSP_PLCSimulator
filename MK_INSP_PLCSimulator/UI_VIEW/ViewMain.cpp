@@ -357,6 +357,54 @@ void CViewMain::SendCmd(BYTE cCh, BYTE cOpCode, BYTE cField, int nValue)
 	}
 }
 
+void CViewMain::SetInfo(PLC_CMD_FIELD_BODY* pBody)
+{
+	if (!m_xUi[UI_LIST_INFO].pList)
+		return;
+
+	int nCol = -1, nRow = -1;
+	switch (pBody->cField){
+	case FIELD_CAM_ONLINE: //相機狀態
+		nCol = UI_FIELD_INFO_CAMSTATUS;
+		break;
+	case FIELD_INSP_VERIFY: //2次校驗
+		nCol = UI_FIELD_INFO_VERIFY;
+		break;
+	case FIELD_INSP_MODE: //檢測類別
+		nCol = UI_FIELD_INFO_SOLL;
+		break;
+	case FIELD_GOLDEN_READY: //Golden Ready
+		nCol = UI_FIELD_INFO_GOLDEN_READY;
+		break;
+	case FIELD_VERIFY_READY: //Verify Ready
+		nCol = UI_FIELD_INFO_VERIFY_GOLDEN_READY;
+		break;
+	case FIELD_GOLDEN_RESET: //Golden reset
+		nCol = UI_FIELD_INFO_GOLDEN_RESET;
+		break;
+	case FIELD_VERIFY_RESET: //Verify reset
+		nCol = UI_FIELD_INFO_VERIFY_GOLDEN_RESET;
+		break;
+	default:
+		break;
+	}
+	switch (pBody->cCh){
+	case CAMERA_ROLL:
+		nRow = UI_ROW_ROLL;
+		break;
+	case CAMERA_OP:
+		nRow = UI_ROW_OP;
+		break;
+	case CAMERA_SIDE:
+		nRow = UI_ROW_SIDE;
+		break;
+	}
+	if (nCol > 0 && nRow > 0){
+		m_xUi[UI_LIST_INFO].pList->SetItemText(nCol, nRow, L"ok");
+	}
+	
+}
+
 BEGIN_MESSAGE_MAP(CViewMain, CWnd)
 	ON_BN_CLICKED(UI_BTN_CAMDIR, OnSendCamDir)
 	ON_BN_CLICKED(UI_BTN_BARWIDTH, OnSendBarWidth)
@@ -406,18 +454,40 @@ void CViewMain::DoSessionErrorNotify(void *pInstance, long ErrorId)
 
 void CViewMain::DoSessionReceivePacket(void *pInstance, PLC_CMD_FIELD_BODY* pBody)
 { 
+	BOOL bDump = TRUE;
 	if (pBody){
 		switch (pBody->cField){
 		case FIELD_CAM_DIR:
-			if (pBody->cOpCode == OPCODE_ECHO)
+			if (pBody->cOpCode == OPCODE_ECHO){
 				m_xUi[UI_lABEL_CAMDIR_RESP].pLabel->SetWindowText(L"set CAM_DIR done");
+				bDump = FALSE;
+			}
 			break;
 		case FIELD_BAR_WIDTH:
-			if (pBody->cOpCode == OPCODE_ECHO)
+			if (pBody->cOpCode == OPCODE_ECHO){
 				m_xUi[UI_lABEL_BARWIDTH_RESP].pLabel->SetWindowText(L"set BAR_WIDTH done");
+				bDump = FALSE;
+			}
+			break;
+		case FIELD_CAM_ONLINE: //相機狀態
+		case FIELD_INSP_VERIFY: //2次校驗
+		case FIELD_INSP_MODE: //檢測類別
+		case FIELD_GOLDEN_READY: //Golden Ready
+		case FIELD_VERIFY_READY: //Verify Ready
+		case FIELD_GOLDEN_RESET: //Golden reset
+		case FIELD_VERIFY_RESET: //Verify reset
+			if (pBody->cOpCode == OPCODE_SET){
+				SetInfo(pBody);
+				bDump = FALSE;
+			}
 			break;
 		default:
 			break;
+		}
+		if (bDump){
+			CString strMsg;
+			strMsg.Format(L"未處理訊息: %d %d %d %d ", pBody->cCh, pBody->cOpCode, pBody->cOpCode, pBody->wValue);
+			TRACE(strMsg);
 		}
 		delete pBody;
 	}

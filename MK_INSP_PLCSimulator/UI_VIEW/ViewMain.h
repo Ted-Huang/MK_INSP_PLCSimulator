@@ -64,6 +64,7 @@ private:
 	void InitListInfoContent();
 	WORD SWAP(WORD tData);
 	void SendCmd(BYTE cCh, BYTE cOpCode, BYTE cField, int nValue);
+	void SetInfo(PLC_CMD_FIELD_BODY* pBody);
 protected:
 	afx_msg void OnSendCamDir();
 	afx_msg void OnSendBarWidth();

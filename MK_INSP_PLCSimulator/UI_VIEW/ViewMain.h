@@ -69,7 +69,7 @@ private:
 	void InitListInfoContent();
 	WORD SWAP(WORD tData);
 	void SendCmd(BYTE cCh, BYTE cOpCode, BYTE cField, int nValue);
-	void SetInfo(PLC_CMD_FIELD_BODY* pBody);
+	void SetListCtrl(int nCtrlID, PLC_CMD_FIELD_BODY* pBody, BOOL bOK);
 	int GetListRow(BYTE cCh);
 	int GetListColumn(BYTE cField);
 	void AddSocketMsg(CString strMsg);
@@ -77,6 +77,7 @@ protected:
 	afx_msg void OnSendCamDir();
 	afx_msg void OnSendBarWidth();
 	afx_msg void OnSendEvent();
+	afx_msg void OnClearAll();
 	DECLARE_MESSAGE_MAP()
 protected:
 	virtual void DoSocketNotify(void *pInstance, long ErrorId);
@@ -89,6 +90,7 @@ private:
 		UI_BTN_CAMDIR = UI_BTN_BEGIN, 
 		UI_BTN_BARWIDTH,
 		UI_BTN_EVENT,
+		UI_BTN_CLEARALL,
 		UI_BTN_END,
 		//LABEL
 		UI_LABEL_BEGIN,
@@ -129,6 +131,7 @@ private:
 		UI_FIELD_INSP_CAMERA,
 		UI_FIELD_INSP_RESULT,
 		UI_FIELD_INSP_INSPTIME,
+		UI_FIELD_VERIFY_INSPTIME,
 		UI_FIELD_INSP_IMGRCVTIME,
 		UI_FIELD_INSP_MAX
 	};

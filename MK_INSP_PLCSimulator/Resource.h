@@ -30,7 +30,8 @@
 #define IDS_ROLL						1021	
 #define IDS_OP							1022	
 #define IDS_SIDE						1023
-
+#define IDS_CLEARALL					1024
+#define IDS_VERIFYTIME					1025
 // 下一個新增物件的預設值
 //
 #ifdef APSTUDIO_INVOKED

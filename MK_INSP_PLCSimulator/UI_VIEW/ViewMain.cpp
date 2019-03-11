@@ -48,10 +48,15 @@ void CViewMain::InitUiRectPos()
 		{			
 			//LIST BOX
 		case UI_LB_MSG:
-			ptBase = { 500, 30 };
+			ptBase = { 600, 30 };
 			ptSize = { 300, 150 };
 			break;
 			//BTN
+		case UI_BTN_CLEARALL:
+			ptBase = { 600, 200 };
+			ptSize = { 80, 25 };
+			nCaptionID = IDS_CLEARALL;
+			break;
 		case UI_BTN_CAMDIR:
 			ptBase = { 280, 30 };
 			ptSize = { 50, 25 };
@@ -126,7 +131,7 @@ void CViewMain::InitUiRectPos()
 			//LIST
 		case UI_LIST_INSP:
 			ptBase = { 130, 180 };
-			ptSize = { 300, 100 };
+			ptSize = { 400, 100 };
 			break;
 		case UI_LIST_INFO:
 			ptBase = { 130, 300 };
@@ -281,6 +286,7 @@ void CViewMain::InitListInspHeader()
 	pList->InsertColumn(UI_FIELD_INSP_CAMERA, LoadResourceString(IDS_CAMERA), LVCFMT_CENTER, 50);
 	pList->InsertColumn(UI_FIELD_INSP_RESULT, LoadResourceString(IDS_RESULT), LVCFMT_CENTER, 50);
 	pList->InsertColumn(UI_FIELD_INSP_INSPTIME, LoadResourceString(IDS_INSPTIME), LVCFMT_CENTER, 100);
+	pList->InsertColumn(UI_FIELD_VERIFY_INSPTIME, LoadResourceString(IDS_VERIFYTIME), LVCFMT_CENTER, 100);
 	pList->InsertColumn(UI_FIELD_INSP_IMGRCVTIME, LoadResourceString(IDS_IMGRCVTIME), LVCFMT_CENTER, 100);
 
 }
@@ -380,19 +386,19 @@ void CViewMain::SendCmd(BYTE cCh, BYTE cOpCode, BYTE cField, int nValue)
 	}
 }
 
-void CViewMain::SetInfo(PLC_CMD_FIELD_BODY* pBody)
+void CViewMain::SetListCtrl(int nCtrlID, PLC_CMD_FIELD_BODY* pBody, BOOL bOK)
 {
-	if (!m_xUi[UI_LIST_INFO].pList)
+	if (!m_xUi[nCtrlID].pList)
 		return;
 
 	int nCol = GetListColumn(pBody->cField)
 		, nRow = GetListRow(pBody->cCh);
 
 	
-	if (nCol > 0 && nRow > 0){
-		m_xUi[UI_LIST_INFO].pList->SetItemText(nCol, nRow, L"ok");
-	}
+	if (nCol >= 0 && nRow >= 0){
 	
+		m_xUi[nCtrlID].pList->SetItemText(nRow, nCol, bOK ? L"ok" : L"not ok");
+	}
 }
 
 int CViewMain::GetListRow(BYTE cCh)
@@ -409,7 +415,7 @@ int CViewMain::GetListRow(BYTE cCh)
 		nRow = UI_ROW_SIDE;
 		break;
 	}
-	ASSERT(nRow > 0);
+	ASSERT(nRow >= 0);
 	return nRow;
 }
 
@@ -438,10 +444,19 @@ int CViewMain::GetListColumn(BYTE cField)
 	case FIELD_VERIFY_RESET: //Verify reset
 		nCol = UI_FIELD_INFO_VERIFY_GOLDEN_RESET;
 		break;
+	case FIELD_INSP_RESULT:
+		nCol = UI_FIELD_INSP_RESULT;
+		break;
+	case FIELD_INSP_ERR:
+		nCol = UI_FIELD_INSP_RESULT;
+		break;
+	case FIELD_CAM_IMG_RECVBIT:
+		nCol = UI_FIELD_INSP_IMGRCVTIME;
+		break;
 	default:
 		break;
 	}
-	ASSERT(nCol > 0);
+	ASSERT(nCol >= 0);
 	return nCol;
 }
 
@@ -457,6 +472,7 @@ BEGIN_MESSAGE_MAP(CViewMain, CWnd)
 	ON_BN_CLICKED(UI_BTN_CAMDIR, OnSendCamDir)
 	ON_BN_CLICKED(UI_BTN_BARWIDTH, OnSendBarWidth)
 	ON_BN_CLICKED(UI_BTN_EVENT, OnSendEvent)
+	ON_BN_CLICKED(UI_BTN_CLEARALL, OnClearAll)
 END_MESSAGE_MAP()
 
 void CViewMain::OnSendCamDir()
@@ -495,6 +511,27 @@ void CViewMain::OnSendEvent()
 	int nEventID = m_xUi[UI_CB_EVENT].pCB->GetItemData(m_xUi[UI_CB_EVENT].pCB->GetCurSel());
 
 	SendCmd(CAMERA_ALL, OPCODE_SET, *(BYTE*)&nEventID, NULL);
+}
+
+void CViewMain::OnClearAll()
+{
+	if (!m_xUi[UI_LIST_INSP].pList || !m_xUi[UI_LIST_INFO].pList)
+		return;
+
+	for (int nCol = UI_FIELD_INSP_RESULT; nCol < UI_FIELD_INSP_MAX; nCol++){
+		m_xUi[UI_LIST_INSP].pList->SetItemText(0, nCol, L"");
+		m_xUi[UI_LIST_INSP].pList->SetItemText(1, nCol, L"");
+		m_xUi[UI_LIST_INSP].pList->SetItemText(2, nCol, L"");
+	}
+
+	for (int nCol = UI_FIELD_INFO_CAMSTATUS; nCol < UI_FIELD_INFO_MAX; nCol++){
+		m_xUi[UI_LIST_INFO].pList->SetItemText(0, nCol, L"");
+		m_xUi[UI_LIST_INFO].pList->SetItemText(1, nCol, L"");
+		m_xUi[UI_LIST_INFO].pList->SetItemText(2, nCol, L"");
+	}
+
+	m_xUi[UI_lABEL_CAMDIR_RESP].pLabel->SetWindowText(L"");
+	m_xUi[UI_lABEL_BARWIDTH_RESP].pLabel->SetWindowText(L"");
 }
 
 void CViewMain::DoSocketNotify(void *pInstance, long ErrorId)
@@ -557,7 +594,15 @@ void CViewMain::DoSessionReceivePacket(void *pInstance, PLC_CMD_FIELD_BODY* pBod
 		case FIELD_GOLDEN_RESET: //Golden reset
 		case FIELD_VERIFY_RESET: //Verify reset
 			if (pBody->cOpCode == OPCODE_SET){
-				SetInfo(pBody);
+				SetListCtrl(UI_LIST_INFO, pBody, TRUE);
+				bDump = FALSE;
+			}
+			break;
+		case FIELD_INSP_RESULT:
+		case FIELD_INSP_ERR:
+		case FIELD_CAM_IMG_RECVBIT:
+			if (pBody->cOpCode == OPCODE_SET){
+				SetListCtrl(UI_LIST_INSP, pBody, pBody->cField == FIELD_INSP_RESULT);
 				bDump = FALSE;
 			}
 			break;
@@ -566,7 +611,7 @@ void CViewMain::DoSessionReceivePacket(void *pInstance, PLC_CMD_FIELD_BODY* pBod
 		}
 		if (bDump){
 			CString strMsg;
-			strMsg.Format(L"未處理訊息: %d %d %d %d ", pBody->cCh, pBody->cOpCode, pBody->cOpCode, pBody->wValue);
+			strMsg.Format(L"未處理訊息: %d %d %d %d \n", pBody->cCh, pBody->cField, pBody->cOpCode, pBody->wValue);
 			TRACE(strMsg);
 		}
 		delete pBody;

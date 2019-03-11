@@ -19,7 +19,7 @@ protected:
 
 public:
 	//ISESSION_NOTIFY
-	virtual void DoSessionErrorNotify(void *pInstance, long ErrorId);
+	virtual void DoSocketNotify(void *pInstance, long ErrorId);
 private:
 	void Init();
 	void Finalize();

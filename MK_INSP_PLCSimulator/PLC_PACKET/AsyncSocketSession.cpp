@@ -22,7 +22,7 @@ void CAsyncSocketSession::Init()
 
 void CAsyncSocketSession::OnClose(int nErrorCode)
 {
-	OnSessionErrorNotify(this, ERR_SDK_SOCKET_CLOSE);
+	OnSocketNotify(this, ERR_SDK_SOCKET_CLOSE);
 	
 	CAsyncSocket::OnClose(nErrorCode);
 }
@@ -52,7 +52,7 @@ void CAsyncSocketSession::OnReceive(int nErrorCode)
 		CheckDataBuf();
 	}
 	else{
-		OnSessionErrorNotify(this, ERR_SDK_SOCKET_CLOSE);
+		OnSocketNotify(this, ERR_SDK_SOCKET_CLOSE);
 	}
 	CAsyncSocket::OnReceive(nErrorCode);
 }

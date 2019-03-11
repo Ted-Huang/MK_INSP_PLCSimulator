@@ -17,13 +17,13 @@ public:
 
 	void AttachNotify(ISESSION_NOTIFY *pLink) { m_pNotoify = pLink; };
 
-	void OnSessionErrorNotify(void *pInstance, long ErrorId)
+	void OnSocketNotify(void *pInstance, long ErrorId)
 	{
 		if (m_pNotoify){
-			m_pNotoify->OnSessionErrorNotify(pInstance, ErrorId);
+			m_pNotoify->OnSocketNotify(pInstance, ErrorId);
 		}
 		else{
-			DoSessionErrorNotify(pInstance, ErrorId);
+			DoSocketNotify(pInstance, ErrorId);
 		}
 	}
 	void OnSessionReceivePacket(void *pInstance, PLC_CMD_FIELD_BODY* pBody)
@@ -36,7 +36,7 @@ public:
 		}
 	}
 protected:
-	virtual void DoSessionErrorNotify(void *pInstance, long ErrorId) {};
+	virtual void DoSocketNotify(void *pInstance, long ErrorId) {};
 	virtual void DoSessionReceivePacket(void *pInstance, PLC_CMD_FIELD_BODY* pBody){};
 protected:
 	enum {

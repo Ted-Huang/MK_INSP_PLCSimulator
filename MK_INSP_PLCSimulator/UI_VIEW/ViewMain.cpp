@@ -10,6 +10,15 @@ CViewMain::CViewMain(RECT &rcTarget, CWnd *pParent, UINT ResourceId)
 	Create(NULL, _T("CViewMain"), WS_CHILD | WS_VISIBLE, rcTarget, pParent, ResourceId);
 	InitUiRectPos();
 	InitUI();
+	if (m_pServer->Start()){
+		m_pServer->AttachNotify(this);
+		CString strMsg;
+		strMsg.Format(L"Listening Port  %d ", PLC_PORT);
+		AddSocketMsg(strMsg);
+	}
+	else{
+		AddSocketMsg(L"socket server start fail");
+	}
 }
 
 CViewMain::~CViewMain()
@@ -25,8 +34,6 @@ void CViewMain::Init()
 {
 	memset(m_xUi, 0, sizeof(m_xUi));
 	m_pServer = new CAsyncSocketServer;
-	m_pServer->Start();
-	m_pServer->AttachNotify(this);
 }
 
 void CViewMain::InitUiRectPos()
@@ -38,7 +45,12 @@ void CViewMain::InitUiRectPos()
 		POINT ptSize = { 0, 0 };
 
 		switch (x)
-		{
+		{			
+			//LIST BOX
+		case UI_LB_MSG:
+			ptBase = { 500, 30 };
+			ptSize = { 300, 150 };
+			break;
 			//BTN
 		case UI_BTN_CAMDIR:
 			ptBase = { 280, 30 };
@@ -167,6 +179,13 @@ void CViewMain::InitUI()
 		m_xUi[x].pList->SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
 		g_AoiFont.SetWindowFont(m_xUi[x].pBtn, FontDef::typeT1);
 	}
+	//LIST BOX
+	for (int x = UI_LB_BEGIN; x < UI_LB_END; x++){
+		m_xUi[x].pLB = new CListBox;
+		m_xUi[x].pLB->Create(WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL | WS_HSCROLL, m_xUi[x].rcUi, this, m_xUi[x].nID);
+		m_xUi[x].pLB->SetHorizontalExtent(1000);
+		g_AoiFont.SetWindowFont(m_xUi[x].pCB, FontDef::typeT1);
+	}
 	InitListInspHeader();
 	InitListInspContent();
 	InitListInfoHeader();
@@ -183,10 +202,6 @@ void CViewMain::InitUI()
 	m_xUi[UI_CB_EVENT].pCB->SetCurSel(0);
 
 	m_xUi[UI_RADIO_CAMDIR_LEFT].pBtn->SetCheck(TRUE);
-
-	CString strMsg;
-	strMsg.Format(L"Listening Port: %d", PLC_PORT);
-	SetWindowText(strMsg);
 }
 
 void CViewMain::DestroyUI()
@@ -237,6 +252,14 @@ void CViewMain::DestroyUI()
 			m_xUi[x].pBtn->DestroyWindow();
 			delete m_xUi[x].pBtn;
 			m_xUi[x].pBtn = NULL;
+		}
+	}
+	//LIST BOX
+	for (int x = UI_LB_BEGIN; x < UI_LB_END; x++){
+		if (m_xUi[x].pLB){
+			m_xUi[x].pLB->DestroyWindow();
+			delete m_xUi[x].pLB;
+			m_xUi[x].pLB = NULL;
 		}
 	}
 }
@@ -362,8 +385,38 @@ void CViewMain::SetInfo(PLC_CMD_FIELD_BODY* pBody)
 	if (!m_xUi[UI_LIST_INFO].pList)
 		return;
 
-	int nCol = -1, nRow = -1;
-	switch (pBody->cField){
+	int nCol = GetListColumn(pBody->cField)
+		, nRow = GetListRow(pBody->cCh);
+
+	
+	if (nCol > 0 && nRow > 0){
+		m_xUi[UI_LIST_INFO].pList->SetItemText(nCol, nRow, L"ok");
+	}
+	
+}
+
+int CViewMain::GetListRow(BYTE cCh)
+{
+	int nRow = -1;
+	switch (cCh){
+	case CAMERA_ROLL:
+		nRow = UI_ROW_ROLL;
+		break;
+	case CAMERA_OP:
+		nRow = UI_ROW_OP;
+		break;
+	case CAMERA_SIDE:
+		nRow = UI_ROW_SIDE;
+		break;
+	}
+	ASSERT(nRow > 0);
+	return nRow;
+}
+
+int CViewMain::GetListColumn(BYTE cField)
+{
+	int nCol = -1;
+	switch (cField){
 	case FIELD_CAM_ONLINE: //¬Û¾÷ª¬ºA
 		nCol = UI_FIELD_INFO_CAMSTATUS;
 		break;
@@ -388,21 +441,16 @@ void CViewMain::SetInfo(PLC_CMD_FIELD_BODY* pBody)
 	default:
 		break;
 	}
-	switch (pBody->cCh){
-	case CAMERA_ROLL:
-		nRow = UI_ROW_ROLL;
-		break;
-	case CAMERA_OP:
-		nRow = UI_ROW_OP;
-		break;
-	case CAMERA_SIDE:
-		nRow = UI_ROW_SIDE;
-		break;
+	ASSERT(nCol > 0);
+	return nCol;
+}
+
+void CViewMain::AddSocketMsg(CString strMsg)
+{
+	if (m_xUi[UI_LB_MSG].pLB){
+		m_xUi[UI_LB_MSG].pLB->AddString(strMsg);
+		m_xUi[UI_LB_MSG].pLB->SetCurSel(m_xUi[UI_LB_MSG].pLB->GetCount() - 1);
 	}
-	if (nCol > 0 && nRow > 0){
-		m_xUi[UI_LIST_INFO].pList->SetItemText(nCol, nRow, L"ok");
-	}
-	
 }
 
 BEGIN_MESSAGE_MAP(CViewMain, CWnd)
@@ -426,11 +474,15 @@ void CViewMain::OnSendBarWidth()
 {
 	if (!m_xUi[UI_EDIT_BARWIDTH].pEdit || !m_xUi[UI_lABEL_BARWIDTH_RESP].pLabel)
 		return;
-	m_xUi[UI_lABEL_BARWIDTH_RESP].pLabel->SetWindowText(L"setting...");
+
 	CString strBarWidth;
 	m_xUi[UI_EDIT_BARWIDTH].pEdit->GetWindowText(strBarWidth);
-	if (!strBarWidth.GetLength())
+
+	if (!strBarWidth.GetLength()){
+		AfxMessageBox(L"BAR_WIDTH empty!");
 		return;
+	}
+	m_xUi[UI_lABEL_BARWIDTH_RESP].pLabel->SetWindowText(L"setting...");
 
 	SendCmd(CAMERA_ALL, OPCODE_SET, FIELD_BAR_WIDTH, _ttoi(strBarWidth));
 }
@@ -445,10 +497,38 @@ void CViewMain::OnSendEvent()
 	SendCmd(CAMERA_ALL, OPCODE_SET, *(BYTE*)&nEventID, NULL);
 }
 
-void CViewMain::DoSessionErrorNotify(void *pInstance, long ErrorId)
+void CViewMain::DoSocketNotify(void *pInstance, long ErrorId)
 {
+	CString strMsg;
+	switch (ErrorId)
+	{
+	case ERR_SDK_SOCKET_CONNECT:
+		if (pInstance){
+			CAsyncSocketSession* pSession = (CAsyncSocketSession*)pInstance;
+			CString strIP;
+			UINT nPort;
+			pSession->GetPeerName(strIP, nPort);
+			strMsg.Format(L"Client %s: %d connect", strIP, nPort);
+		}
+		break;
+	case ERR_SDK_SOCKET_CLOSE:
+		{
+			if (pInstance){
+				CAsyncSocketSession* pSession = (CAsyncSocketSession*)pInstance;
+				CString strIP;
+				UINT nPort;
+				pSession->GetPeerName(strIP, nPort);
+				strMsg.Format(L"Client %s: %d disconnect", strIP, nPort);
+			}
+		}
+		break;
+	default:
+		strMsg.Format(L"Socket Notify not implement %d", ErrorId);
+		break;
+	}
+	AddSocketMsg(strMsg);
 	if (m_pServer){
-		m_pServer->DoSessionErrorNotify(pInstance, ErrorId);
+		m_pServer->DoSocketNotify(pInstance, ErrorId);
 	}
 }
 

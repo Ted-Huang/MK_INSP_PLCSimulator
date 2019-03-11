@@ -10,7 +10,7 @@ typedef struct UI_OBJ_{
 	CButton* pBtn;
 	CComboBox* pCB;
 	CListCtrl* pList;
-
+	CListBox* pLB;
 	UI_OBJ_(){
 		memset(&rcUi, 0, sizeof(rcUi));
 		nID = 0;
@@ -20,6 +20,7 @@ typedef struct UI_OBJ_{
 		pBtn = NULL;
 		pCB = NULL;
 		pList = NULL;
+		pLB = NULL;
 	}
 	~UI_OBJ_(){
 		if (pEdit){
@@ -41,6 +42,10 @@ typedef struct UI_OBJ_{
 		if (pList){
 			delete pList;
 			pList = NULL;
+		};
+		if (pLB){
+			delete pLB;
+			pLB = NULL;
 		};
 	}
 }UI_OBJ;
@@ -65,13 +70,16 @@ private:
 	WORD SWAP(WORD tData);
 	void SendCmd(BYTE cCh, BYTE cOpCode, BYTE cField, int nValue);
 	void SetInfo(PLC_CMD_FIELD_BODY* pBody);
+	int GetListRow(BYTE cCh);
+	int GetListColumn(BYTE cField);
+	void AddSocketMsg(CString strMsg);
 protected:
 	afx_msg void OnSendCamDir();
 	afx_msg void OnSendBarWidth();
 	afx_msg void OnSendEvent();
 	DECLARE_MESSAGE_MAP()
 protected:
-	virtual void DoSessionErrorNotify(void *pInstance, long ErrorId);
+	virtual void DoSocketNotify(void *pInstance, long ErrorId);
 	virtual void DoSessionReceivePacket(void *pInstance, PLC_CMD_FIELD_BODY* pBody);
 private:
 	enum{
@@ -110,6 +118,10 @@ private:
 		UI_LIST_INSP = UI_LIST_BEGIN,
 		UI_LIST_INFO,
 		UI_LIST_END,
+		//LIST BOX
+		UI_LB_BEGIN,
+		UI_LB_MSG = UI_LB_BEGIN,
+		UI_LB_END,
 		UI_ITEM_END,
 	};
 

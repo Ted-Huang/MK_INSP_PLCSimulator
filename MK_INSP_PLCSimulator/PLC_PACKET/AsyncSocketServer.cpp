@@ -56,23 +56,37 @@ void CAsyncSocketServer::OnAccept(int nErrorCode)
 	m_vSession.push_back(pSession);
 	Accept(*pSession);
 	pSession->AttachNotify(this);
+	OnSocketNotify(pSession, ERR_SDK_SOCKET_CONNECT);
 }
 
-void CAsyncSocketServer::DoSessionErrorNotify(void *pInstance, long ErrorId)
+void CAsyncSocketServer::DoSocketNotify(void *pInstance, long ErrorId)
 {
 	if (!pInstance)
 		return;
 	
-	auto it = m_vSession.begin();
-	while (it != m_vSession.end()){
-		if (*it && *it == pInstance){
-			delete *it;
-			*it = NULL;
-			m_vSession.erase(it);
-			break;
+	switch (ErrorId)
+	{
+	case ERR_SDK_SOCKET_CLOSE:
+		{
+			auto it = m_vSession.begin();
+			while (it != m_vSession.end()){
+				if (*it && *it == pInstance){
+					delete *it;
+					*it = NULL;
+					m_vSession.erase(it);
+					break;
+				}
+				it++;
+			}
 		}
-		it++;
+		break;
+	case ERR_SDK_SOCKET_CONNECT:// nothing to do
+		break;
+	default:
+		TRACE("msg %d not implement \n", ErrorId);
+		break;
 	}
+	
 }
 
 void CAsyncSocketServer::Init()

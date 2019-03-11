@@ -205,7 +205,7 @@ void CViewMain::InitUI()
 	m_xUi[UI_CB_EVENT].pCB->AddString(LoadResourceString(IDS_INSPTRIGGER));
 	m_xUi[UI_CB_EVENT].pCB->AddString(LoadResourceString(IDS_INSPVERIFY));
 	m_xUi[UI_CB_EVENT].pCB->SetItemData(0, FIELD_INSP_TRIGGER);
-	m_xUi[UI_CB_EVENT].pCB->SetItemData(1, FIELD_INSP_VERIFY2);
+	m_xUi[UI_CB_EVENT].pCB->SetItemData(1, FIELD_INSP_VERIFY_TRIGGER);
 
 
 	m_xUi[UI_CB_EVENT].pCB->SetCurSel(0);
@@ -409,11 +409,11 @@ void CViewMain::SetListCtrl(int nCtrlID, PLC_CMD_FIELD_BODY* pBody)
 		m_xUi[nCtrlID].pList->SetItemText(pBody->cCh, UI_FIELD_INSP_INSPRESULT, pBody->cField == FIELD_INSP_RESULT ? L"ok" : L"not ok");
 		m_xUi[nCtrlID].pList->SetItemText(pBody->cCh, UI_FIELD_INSP_INSPTIME, strMsg);
 		break;
-	case FIELD_VERIFY_RESULT:
+	case FIELD_INSP_VERIFY_RESULT:
 		QueryPerformanceCounter(&tNow);
 		elapsedTime = ((tNow.QuadPart - arVerifyTime[pBody->cCh].QuadPart) * 1000.0) / frequency.QuadPart;
 		strMsg.Format(L"%.2f", elapsedTime);
-		m_xUi[nCtrlID].pList->SetItemText(pBody->cCh, UI_FIELD_INSP_VERIFYRESULT, pBody->cField == FIELD_VERIFY_RESULT ? L"ok" : L"not ok");
+		m_xUi[nCtrlID].pList->SetItemText(pBody->cCh, UI_FIELD_INSP_VERIFYRESULT, pBody->cField == FIELD_INSP_VERIFY_RESULT ? L"ok" : L"not ok");
 		m_xUi[nCtrlID].pList->SetItemText(pBody->cCh, UI_FIELD_INSP_VERIFYIME, strMsg);
 		break;
 	case FIELD_CAM_IMG_RECVBIT:
@@ -566,7 +566,7 @@ void CViewMain::OnSendEvent()
 		QueryPerformanceCounter(&arInspTime[UI_ROW_OP]);
 		QueryPerformanceCounter(&arInspTime[UI_ROW_SIDE]);
 	}
-	else if (nEventID == FIELD_INSP_VERIFY2){
+	else if (nEventID == FIELD_INSP_VERIFY_TRIGGER){
 		ClearINSPCol(UI_FIELD_INSP_VERIFYRESULT); //Clear col 
 		ClearINSPCol(UI_FIELD_INSP_VERIFYIME);
 		ClearINSPCol(UI_FIELD_INSP_IMGRCVTIME);
@@ -671,7 +671,7 @@ void CViewMain::DoSessionReceivePacket(void *pInstance, PLC_CMD_FIELD_BODY* pBod
 		case FIELD_INSP_RESULT:
 		case FIELD_INSP_ERR:
 		case FIELD_CAM_IMG_RECVBIT:
-		case FIELD_VERIFY_RESULT:
+		case FIELD_INSP_VERIFY_RESULT:
 			if (pBody->cOpCode == OPCODE_SET){
 				SetListCtrl(UI_LIST_INSP, pBody);
 				bDump = FALSE;

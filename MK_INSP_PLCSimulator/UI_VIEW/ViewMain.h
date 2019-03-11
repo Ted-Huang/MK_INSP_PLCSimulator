@@ -1,6 +1,8 @@
 #pragma once
 #include "PLC_PACKET\PLC_PACKET_const.h"
 #include "PLC_PACKET\AsyncSocketSession.h"
+#include <vector>
+using namespace std;
 typedef struct UI_OBJ_{  
 	RECT rcUi;
 	UINT nID;
@@ -69,10 +71,11 @@ private:
 	void InitListInfoContent();
 	WORD SWAP(WORD tData);
 	void SendCmd(BYTE cCh, BYTE cOpCode, BYTE cField, int nValue);
-	void SetListCtrl(int nCtrlID, PLC_CMD_FIELD_BODY* pBody, BOOL bOK);
+	void SetListCtrl(int nCtrlID, PLC_CMD_FIELD_BODY* pBody);
 	int GetListRow(BYTE cCh);
 	int GetListColumn(BYTE cField);
 	void AddSocketMsg(CString strMsg);
+	void ClearINSPCol(int nCol);
 protected:
 	afx_msg void OnSendCamDir();
 	afx_msg void OnSendBarWidth();
@@ -129,9 +132,10 @@ private:
 
 	enum{
 		UI_FIELD_INSP_CAMERA,
-		UI_FIELD_INSP_RESULT,
+		UI_FIELD_INSP_INSPRESULT,
 		UI_FIELD_INSP_INSPTIME,
-		UI_FIELD_VERIFY_INSPTIME,
+		UI_FIELD_INSP_VERIFYRESULT,
+		UI_FIELD_INSP_VERIFYIME,
 		UI_FIELD_INSP_IMGRCVTIME,
 		UI_FIELD_INSP_MAX
 	};
@@ -156,4 +160,10 @@ private:
 	};
 	UI_OBJ m_xUi[UI_ITEM_END];
 	CAsyncSocketServer* m_pServer;
+
+	//record time diff
+	LARGE_INTEGER frequency;
+	LARGE_INTEGER arInspTime[UI_ROW_MAX];
+	LARGE_INTEGER arVerifyTime[UI_ROW_MAX];
+	LARGE_INTEGER arIMGRCVTime[UI_ROW_MAX];
 };

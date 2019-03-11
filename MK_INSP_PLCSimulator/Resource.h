@@ -9,7 +9,6 @@
 #define IDS_CAMDIR						1000
 #define IDS_BARWIDTH					1001
 #define IDS_EVENT						1002
-#define IDS_INSPRESULT					1003
 #define IDS_OTHERINFORMATION			1004
 #define IDS_SEND						1005
 #define IDS_LEFT						1006
@@ -17,7 +16,7 @@
 #define IDS_INSPTRIGGER					1008
 #define IDS_INSPVERIFY					1009
 #define IDS_CAMERA						1010
-#define IDS_RESULT						1011
+#define IDS_INSPRESULT					1011
 #define IDS_INSPTIME					1012
 #define IDS_IMGRCVTIME					1013
 #define IDS_CAMSTATUS					1014
@@ -32,6 +31,7 @@
 #define IDS_SIDE						1023
 #define IDS_CLEARALL					1024
 #define IDS_VERIFYTIME					1025
+#define IDS_VERIFYRESULT				1026
 // 下一個新增物件的預設值
 //
 #ifdef APSTUDIO_INVOKED

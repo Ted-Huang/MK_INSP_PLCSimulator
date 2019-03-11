@@ -34,6 +34,10 @@ void CViewMain::Init()
 {
 	memset(m_xUi, 0, sizeof(m_xUi));
 	m_pServer = new CAsyncSocketServer;
+	QueryPerformanceFrequency(&frequency);
+	memset(arInspTime, 0, sizeof(arInspTime));
+	memset(arVerifyTime, 0, sizeof(arVerifyTime));
+	memset(arIMGRCVTime, 0, sizeof(arIMGRCVTime));
 }
 
 void CViewMain::InitUiRectPos()
@@ -48,12 +52,12 @@ void CViewMain::InitUiRectPos()
 		{			
 			//LIST BOX
 		case UI_LB_MSG:
-			ptBase = { 600, 30 };
-			ptSize = { 300, 150 };
+			ptBase = { 700, 30 };
+			ptSize = { 280, 150 };
 			break;
 			//BTN
 		case UI_BTN_CLEARALL:
-			ptBase = { 600, 200 };
+			ptBase = { 700, 200 };
 			ptSize = { 80, 25 };
 			nCaptionID = IDS_CLEARALL;
 			break;
@@ -131,7 +135,7 @@ void CViewMain::InitUiRectPos()
 			//LIST
 		case UI_LIST_INSP:
 			ptBase = { 130, 180 };
-			ptSize = { 400, 100 };
+			ptSize = { 550, 100 };
 			break;
 		case UI_LIST_INFO:
 			ptBase = { 130, 300 };
@@ -284,9 +288,10 @@ void CViewMain::InitListInspHeader()
 	CListCtrl* pList = m_xUi[UI_LIST_INSP].pList;
 	CHeaderCtrl* pHdrCtrl = pList->GetHeaderCtrl();
 	pList->InsertColumn(UI_FIELD_INSP_CAMERA, LoadResourceString(IDS_CAMERA), LVCFMT_CENTER, 50);
-	pList->InsertColumn(UI_FIELD_INSP_RESULT, LoadResourceString(IDS_RESULT), LVCFMT_CENTER, 50);
+	pList->InsertColumn(UI_FIELD_INSP_INSPRESULT, LoadResourceString(IDS_INSPRESULT), LVCFMT_CENTER, 80);
 	pList->InsertColumn(UI_FIELD_INSP_INSPTIME, LoadResourceString(IDS_INSPTIME), LVCFMT_CENTER, 100);
-	pList->InsertColumn(UI_FIELD_VERIFY_INSPTIME, LoadResourceString(IDS_VERIFYTIME), LVCFMT_CENTER, 100);
+	pList->InsertColumn(UI_FIELD_INSP_VERIFYRESULT, LoadResourceString(IDS_VERIFYRESULT), LVCFMT_CENTER, 80);
+	pList->InsertColumn(UI_FIELD_INSP_VERIFYIME, LoadResourceString(IDS_VERIFYTIME), LVCFMT_CENTER, 100);
 	pList->InsertColumn(UI_FIELD_INSP_IMGRCVTIME, LoadResourceString(IDS_IMGRCVTIME), LVCFMT_CENTER, 100);
 
 }
@@ -386,19 +391,49 @@ void CViewMain::SendCmd(BYTE cCh, BYTE cOpCode, BYTE cField, int nValue)
 	}
 }
 
-void CViewMain::SetListCtrl(int nCtrlID, PLC_CMD_FIELD_BODY* pBody, BOOL bOK)
+void CViewMain::SetListCtrl(int nCtrlID, PLC_CMD_FIELD_BODY* pBody)
 {
 	if (!m_xUi[nCtrlID].pList)
 		return;
 
-	int nCol = GetListColumn(pBody->cField)
-		, nRow = GetListRow(pBody->cCh);
+	LARGE_INTEGER tNow;
+	double elapsedTime;
+	CString strMsg;
+
+	switch (pBody->cField){
+	case FIELD_INSP_RESULT:
+	case FIELD_INSP_ERR:
+		QueryPerformanceCounter(&tNow);
+		elapsedTime = ((tNow.QuadPart - arInspTime[pBody->cCh].QuadPart) * 1000.0) / frequency.QuadPart;
+		strMsg.Format(L"%.2f", elapsedTime);
+		m_xUi[nCtrlID].pList->SetItemText(pBody->cCh, UI_FIELD_INSP_INSPRESULT, pBody->cField == FIELD_INSP_RESULT ? L"ok" : L"not ok");
+		m_xUi[nCtrlID].pList->SetItemText(pBody->cCh, UI_FIELD_INSP_INSPTIME, strMsg);
+		break;
+	case FIELD_VERIFY_RESULT:
+		QueryPerformanceCounter(&tNow);
+		elapsedTime = ((tNow.QuadPart - arVerifyTime[pBody->cCh].QuadPart) * 1000.0) / frequency.QuadPart;
+		strMsg.Format(L"%.2f", elapsedTime);
+		m_xUi[nCtrlID].pList->SetItemText(pBody->cCh, UI_FIELD_INSP_VERIFYRESULT, pBody->cField == FIELD_VERIFY_RESULT ? L"ok" : L"not ok");
+		m_xUi[nCtrlID].pList->SetItemText(pBody->cCh, UI_FIELD_INSP_VERIFYIME, strMsg);
+		break;
+	case FIELD_CAM_IMG_RECVBIT:
+
+		QueryPerformanceCounter(&tNow);
+		elapsedTime = ((tNow.QuadPart - arIMGRCVTime[pBody->cCh].QuadPart) * 1000.0) / frequency.QuadPart;
+		strMsg.Format(L"%.2f", elapsedTime);
+		m_xUi[nCtrlID].pList->SetItemText(pBody->cCh, UI_FIELD_INSP_IMGRCVTIME, strMsg);
+		break;
+	default:
+		{
+			int nCol = GetListColumn(pBody->cField)
+				, nRow = GetListRow(pBody->cCh);
+			if (nCol >= 0 && nRow >= 0)
+				m_xUi[nCtrlID].pList->SetItemText(nRow, nCol, L"ok");
+		}
+		break;
+	}	
 
 	
-	if (nCol >= 0 && nRow >= 0){
-	
-		m_xUi[nCtrlID].pList->SetItemText(nRow, nCol, bOK ? L"ok" : L"not ok");
-	}
 }
 
 int CViewMain::GetListRow(BYTE cCh)
@@ -445,10 +480,10 @@ int CViewMain::GetListColumn(BYTE cField)
 		nCol = UI_FIELD_INFO_VERIFY_GOLDEN_RESET;
 		break;
 	case FIELD_INSP_RESULT:
-		nCol = UI_FIELD_INSP_RESULT;
+		nCol = UI_FIELD_INSP_INSPRESULT;
 		break;
 	case FIELD_INSP_ERR:
-		nCol = UI_FIELD_INSP_RESULT;
+		nCol = UI_FIELD_INSP_INSPRESULT;
 		break;
 	case FIELD_CAM_IMG_RECVBIT:
 		nCol = UI_FIELD_INSP_IMGRCVTIME;
@@ -466,6 +501,13 @@ void CViewMain::AddSocketMsg(CString strMsg)
 		m_xUi[UI_LB_MSG].pLB->AddString(strMsg);
 		m_xUi[UI_LB_MSG].pLB->SetCurSel(m_xUi[UI_LB_MSG].pLB->GetCount() - 1);
 	}
+}
+
+void CViewMain::ClearINSPCol(int nCol)
+{
+	m_xUi[UI_LIST_INSP].pList->SetItemText(0, nCol, L""); //ROLL
+	m_xUi[UI_LIST_INSP].pList->SetItemText(1, nCol, L""); //OP
+	m_xUi[UI_LIST_INSP].pList->SetItemText(2, nCol, L""); //SIDE
 }
 
 BEGIN_MESSAGE_MAP(CViewMain, CWnd)
@@ -508,7 +550,35 @@ void CViewMain::OnSendEvent()
 	if (!m_xUi[UI_CB_EVENT].pCB)
 		return;
 
+	memset(arInspTime, 0, sizeof(arInspTime));
+	memset(arVerifyTime, 0, sizeof(arVerifyTime));
+	memset(arIMGRCVTime, 0, sizeof(arIMGRCVTime));
+
+
 	int nEventID = m_xUi[UI_CB_EVENT].pCB->GetItemData(m_xUi[UI_CB_EVENT].pCB->GetCurSel());
+
+	if (nEventID == FIELD_INSP_TRIGGER){
+		ClearINSPCol(UI_FIELD_INSP_INSPRESULT); //Clear col 
+		ClearINSPCol(UI_FIELD_INSP_INSPTIME);
+		ClearINSPCol(UI_FIELD_INSP_IMGRCVTIME);
+
+		QueryPerformanceCounter(&arInspTime[UI_ROW_ROLL]); //query time
+		QueryPerformanceCounter(&arInspTime[UI_ROW_OP]);
+		QueryPerformanceCounter(&arInspTime[UI_ROW_SIDE]);
+	}
+	else if (nEventID == FIELD_INSP_VERIFY2){
+		ClearINSPCol(UI_FIELD_INSP_VERIFYRESULT); //Clear col 
+		ClearINSPCol(UI_FIELD_INSP_VERIFYIME);
+		ClearINSPCol(UI_FIELD_INSP_IMGRCVTIME);
+
+		QueryPerformanceCounter(&arVerifyTime[UI_ROW_ROLL]); //query time
+		QueryPerformanceCounter(&arVerifyTime[UI_ROW_OP]);
+		QueryPerformanceCounter(&arVerifyTime[UI_ROW_SIDE]);
+	}
+
+	QueryPerformanceCounter(&arIMGRCVTime[UI_ROW_ROLL]);  //query time
+	QueryPerformanceCounter(&arIMGRCVTime[UI_ROW_OP]);
+	QueryPerformanceCounter(&arIMGRCVTime[UI_ROW_SIDE]);
 
 	SendCmd(CAMERA_ALL, OPCODE_SET, *(BYTE*)&nEventID, NULL);
 }
@@ -518,7 +588,7 @@ void CViewMain::OnClearAll()
 	if (!m_xUi[UI_LIST_INSP].pList || !m_xUi[UI_LIST_INFO].pList)
 		return;
 
-	for (int nCol = UI_FIELD_INSP_RESULT; nCol < UI_FIELD_INSP_MAX; nCol++){
+	for (int nCol = UI_FIELD_INSP_INSPRESULT; nCol < UI_FIELD_INSP_MAX; nCol++){
 		m_xUi[UI_LIST_INSP].pList->SetItemText(0, nCol, L"");
 		m_xUi[UI_LIST_INSP].pList->SetItemText(1, nCol, L"");
 		m_xUi[UI_LIST_INSP].pList->SetItemText(2, nCol, L"");
@@ -594,15 +664,16 @@ void CViewMain::DoSessionReceivePacket(void *pInstance, PLC_CMD_FIELD_BODY* pBod
 		case FIELD_GOLDEN_RESET: //Golden reset
 		case FIELD_VERIFY_RESET: //Verify reset
 			if (pBody->cOpCode == OPCODE_SET){
-				SetListCtrl(UI_LIST_INFO, pBody, TRUE);
+				SetListCtrl(UI_LIST_INFO, pBody);
 				bDump = FALSE;
 			}
 			break;
 		case FIELD_INSP_RESULT:
 		case FIELD_INSP_ERR:
 		case FIELD_CAM_IMG_RECVBIT:
+		case FIELD_VERIFY_RESULT:
 			if (pBody->cOpCode == OPCODE_SET){
-				SetListCtrl(UI_LIST_INSP, pBody, pBody->cField == FIELD_INSP_RESULT);
+				SetListCtrl(UI_LIST_INSP, pBody);
 				bDump = FALSE;
 			}
 			break;

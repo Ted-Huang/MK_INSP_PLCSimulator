@@ -405,15 +405,27 @@ void CViewMain::SetListCtrl(int nCtrlID, PLC_CMD_FIELD_BODY* pBody)
 	case FIELD_INSP_ERR:
 		QueryPerformanceCounter(&tNow);
 		elapsedTime = ((tNow.QuadPart - arInspTime[pBody->cCh].QuadPart) * 1000.0) / frequency.QuadPart;
+
+		if (pBody->cField == FIELD_INSP_RESULT)
+			strMsg.Format(L"ok, %d", pBody->wValue);
+		else
+			strMsg.Format(L"not ok, %d", pBody->wValue);
+
+		m_xUi[nCtrlID].pList->SetItemText(pBody->cCh, UI_FIELD_INSP_INSPRESULT, strMsg);
 		strMsg.Format(L"%.2f", elapsedTime);
-		m_xUi[nCtrlID].pList->SetItemText(pBody->cCh, UI_FIELD_INSP_INSPRESULT, pBody->cField == FIELD_INSP_RESULT ? L"ok" : L"not ok");
 		m_xUi[nCtrlID].pList->SetItemText(pBody->cCh, UI_FIELD_INSP_INSPTIME, strMsg);
 		break;
 	case FIELD_INSP_VERIFY_RESULT:
 		QueryPerformanceCounter(&tNow);
 		elapsedTime = ((tNow.QuadPart - arVerifyTime[pBody->cCh].QuadPart) * 1000.0) / frequency.QuadPart;
+
+		if (pBody->cField == FIELD_INSP_VERIFY_RESULT)
+			strMsg.Format(L"ok, %d", pBody->wValue);
+		else
+			strMsg.Format(L"not ok, %d", pBody->wValue);
+
+		m_xUi[nCtrlID].pList->SetItemText(pBody->cCh, UI_FIELD_INSP_VERIFYRESULT, strMsg);
 		strMsg.Format(L"%.2f", elapsedTime);
-		m_xUi[nCtrlID].pList->SetItemText(pBody->cCh, UI_FIELD_INSP_VERIFYRESULT, pBody->cField == FIELD_INSP_VERIFY_RESULT ? L"ok" : L"not ok");
 		m_xUi[nCtrlID].pList->SetItemText(pBody->cCh, UI_FIELD_INSP_VERIFYIME, strMsg);
 		break;
 	case FIELD_CAM_IMG_RECVBIT:
@@ -422,6 +434,24 @@ void CViewMain::SetListCtrl(int nCtrlID, PLC_CMD_FIELD_BODY* pBody)
 		elapsedTime = ((tNow.QuadPart - arIMGRCVTime[pBody->cCh].QuadPart) * 1000.0) / frequency.QuadPart;
 		strMsg.Format(L"%.2f", elapsedTime);
 		m_xUi[nCtrlID].pList->SetItemText(pBody->cCh, UI_FIELD_INSP_IMGRCVTIME, strMsg);
+		break;
+	case FIELD_CAM_ONLINE:
+	case FIELD_INSP_VERIFY:
+		{
+			strMsg.Format(pBody->wValue > 0 ? L"ok" : L"not ok");
+
+			int nCol = GetListColumn(pBody->cField), nRow = GetListRow(pBody->cCh);
+			if (nCol >= 0 && nRow >= 0)
+				m_xUi[nCtrlID].pList->SetItemText(nRow, nCol, strMsg);
+		}
+		break;
+	case FIELD_INSP_MODE:
+		{
+			strMsg.Format(L"%d", pBody->wValue);
+			int nCol = GetListColumn(pBody->cField), nRow = GetListRow(pBody->cCh);
+			if (nCol >= 0 && nRow >= 0)
+				m_xUi[nCtrlID].pList->SetItemText(nRow, nCol, strMsg);
+		}
 		break;
 	default:
 		{

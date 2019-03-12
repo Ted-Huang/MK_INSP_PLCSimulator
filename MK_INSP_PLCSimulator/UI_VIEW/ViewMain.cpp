@@ -88,7 +88,7 @@ void CViewMain::InitUiRectPos()
 			break;
 		case UI_LABEL_BARWIDTH:
 			ptBase = { 30, 80 };
-			ptSize = { 70, 20 };
+			ptSize = { 70, 50 };
 			nCaptionID = IDS_BARWIDTH;
 			break;
 		case UI_lABEL_BARWIDTH_RESP:
@@ -407,7 +407,7 @@ void CViewMain::SetListCtrl(int nCtrlID, PLC_CMD_FIELD_BODY* pBody)
 		elapsedTime = ((tNow.QuadPart - arInspTime[pBody->cCh].QuadPart) * 1000.0) / frequency.QuadPart;
 
 		if (pBody->cField == FIELD_INSP_RESULT)
-			strMsg.Format(L"ok, %d", pBody->wValue);
+			strMsg.Format(L"ok, %d", pBody->wValue > SHRT_MAX ? pBody->wValue - (USHRT_MAX + 1) : pBody->wValue); //unsigned to signed
 		else
 			strMsg.Format(L"not ok, %d", pBody->wValue);
 
@@ -457,8 +457,15 @@ void CViewMain::SetListCtrl(int nCtrlID, PLC_CMD_FIELD_BODY* pBody)
 		{
 			int nCol = GetListColumn(pBody->cField)
 				, nRow = GetListRow(pBody->cCh);
-			if (nCol >= 0 && nRow >= 0)
-				m_xUi[nCtrlID].pList->SetItemText(nRow, nCol, L"ok");
+			if (nCol >= 0 && nRow >= 0){
+				if (nRow == CAMERA_ALL){
+					m_xUi[nCtrlID].pList->SetItemText(UI_ROW_ROLL, nCol, L"ok");
+					m_xUi[nCtrlID].pList->SetItemText(UI_ROW_OP, nCol, L"ok");
+					m_xUi[nCtrlID].pList->SetItemText(UI_ROW_SIDE, nCol, L"ok");
+				}
+				else
+					m_xUi[nCtrlID].pList->SetItemText(nRow, nCol, L"ok");
+			}
 		}
 		break;
 	}	
@@ -479,6 +486,8 @@ int CViewMain::GetListRow(BYTE cCh)
 	case CAMERA_SIDE:
 		nRow = UI_ROW_SIDE;
 		break;
+	case CAMERA_ALL:
+		nRow = CAMERA_ALL;
 	}
 	ASSERT(nRow >= 0);
 	return nRow;
@@ -704,6 +713,15 @@ void CViewMain::DoSessionReceivePacket(void *pInstance, PLC_CMD_FIELD_BODY* pBod
 		case FIELD_INSP_VERIFY_RESULT:
 			if (pBody->cOpCode == OPCODE_SET){
 				SetListCtrl(UI_LIST_INSP, pBody);
+				bDump = FALSE;
+			}
+			break;
+		case FIELD_INSP_TOGGLEBIT: //igonre TOGGLEBIT
+			bDump = FALSE;
+			break;
+		case FIELD_INSP_TRIGGER:
+		case FIELD_INSP_VERIFY_TRIGGER:
+			if (pBody->cOpCode == OPCODE_ECHO){ //igonre FIELD_INSP_TRIGGER/FIELD_INSP_VERIFY_TRIGGER echo
 				bDump = FALSE;
 			}
 			break;

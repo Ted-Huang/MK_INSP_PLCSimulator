@@ -149,14 +149,7 @@ void CAsyncSocketSession::ParseQueryAliveCmd(PLC_CMDEX_ALIVE_BODY *pData)
 		PLC_CMDEX_ALIVE_BODY *pBody = (PLC_CMDEX_ALIVE_BODY*)xCmd.cBody;
 		PLC_CMDEX_ALIVE_BODY *pSrc = (PLC_CMDEX_ALIVE_BODY*)pData;
 		BOOL bSendFlag = FALSE;
-		//if (pSrc->cTypeR == 1){
-		//	pBody->cTypeS = 2;
-		//	pBody->cValS = (pSrc->cValS + 1) & 0xFF;
 
-		//	//pSrc->cTypeR = 0; //ignore column
-		//	pBody->cValR = pSrc->cValR;
-		//	bSendFlag = TRUE;
-		//}
 		if (pSrc->cTypeR == 3){ //Receive Flag Echo
 			//Record Echo Time....
 			pBody->cTypeR = 1;

@@ -106,6 +106,7 @@
     <ClInclude Include="PLC_PACKET\PLC_PACKET_const.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SharedComponent\AoiFont.h" />
+    <ClInclude Include="SharedComponent\AppLogProcess.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="UI_VIEW\ViewMain.h" />
@@ -116,6 +117,7 @@
     <ClCompile Include="PLC_PACKET\AsyncSocketServer.cpp" />
     <ClCompile Include="PLC_PACKET\AsyncSocketSession.cpp" />
     <ClCompile Include="SharedComponent\AoiFont.cpp" />
+    <ClCompile Include="SharedComponent\AppLogProcess.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

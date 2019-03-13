@@ -3,6 +3,7 @@
 #include "ViewMain.h"
 #include "AoiFont.h"
 #include "PLC_PACKET\AsyncSocketServer.h"
+#include "MK_INSP_PLCSimulator.h"
 
 CViewMain::CViewMain(RECT &rcTarget, CWnd *pParent, UINT ResourceId)
 {
@@ -540,6 +541,7 @@ void CViewMain::AddSocketMsg(CString strMsg)
 		m_xUi[UI_LB_MSG].pLB->AddString(strMsg);
 		m_xUi[UI_LB_MSG].pLB->SetCurSel(m_xUi[UI_LB_MSG].pLB->GetCount() - 1);
 	}
+	theApp.InsertDebugLog(strMsg, LOG_PLCSOCKET);
 }
 
 void CViewMain::ClearINSPCol(int nCol)
@@ -745,6 +747,7 @@ void CViewMain::DoSessionReceivePacket(void *pInstance, PLC_CMD_FIELD_BODY* pBod
 			CString strMsg;
 			strMsg.Format(L"未處理訊息: %d %d %d %d \n", pBody->cCh, pBody->cField, pBody->cOpCode, pBody->wValue);
 			TRACE(strMsg);
+			theApp.InsertDebugLog(strMsg, LOG_PLCSOCKET);
 		}
 		delete pBody;
 	}

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "PLC_PACKET_const.h"
 #include "AsyncSocketServer.h"
-
+#include "MK_INSP_PLCSimulator.h"
 
 
 CAsyncSocketServer::CAsyncSocketServer()
@@ -20,6 +20,7 @@ BOOL CAsyncSocketServer::Start()
 	if (Create(PLC_PORT)){
 		if (Listen()){
 			bFlag = TRUE;
+			theApp.InsertDebugLog(L"start listening", LOG_PLCSOCKET);
 		}
 	}
 	return bFlag;
@@ -44,6 +45,9 @@ void CAsyncSocketServer::SendData(BYTE cCmdType, BYTE* pData)
 		}
 		it++;
 	}
+	CString strLogSrc;
+	strLogSrc.Format(_T("SEND----%02X%02X%02X%02X%02X%02X%02X\n\r"), xPacket.cStart, xPacket.cCmdType, xPacket.cBody[0], xPacket.cBody[1], xPacket.cBody[2], xPacket.cBody[3], xPacket.cEnd);
+	theApp.InsertDebugLog(strLogSrc, LOG_PLCSOCKET);
 }
 
 void CAsyncSocketServer::OnAccept(int nErrorCode)
@@ -83,7 +87,13 @@ void CAsyncSocketServer::DoSocketNotify(void *pInstance, long ErrorId)
 	case ERR_SDK_SOCKET_CONNECT:// nothing to do
 		break;
 	default:
-		TRACE("msg %d not implement \n", ErrorId);
+		{
+			CString strMsg;
+			strMsg.Format(L"CAsyncSocketServer::DoSocketNotify msg %d not implement \n", ErrorId);
+			TRACE(strMsg);
+			theApp.InsertDebugLog(strMsg, LOG_PLCSOCKET);
+		}
+	
 		break;
 	}
 	
@@ -94,7 +104,7 @@ void CAsyncSocketServer::Init()
 	if (!AfxSocketInit()){
 		CString strLogMsg;
 		strLogMsg.Format(_T("Failed to Initialize Sockets"));
-		//theApp.InsertDebugLog(strLogMsg, LOG_PLCSOCKET);
+		theApp.InsertDebugLog(strLogMsg, LOG_PLCSOCKET);
 		AfxMessageBox(strLogMsg, MB_OK | MB_ICONSTOP);
 	}
 }

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "AsyncSocketSession.h"
+#include "MK_INSP_PLCSimulator.h"
 
 CAsyncSocketSession::CAsyncSocketSession()
 {
@@ -96,6 +97,9 @@ bool CAsyncSocketSession::ParseCommand(PLC_CMDEX_PACKET *pData)
 {
 	bool bFlag = false;
 	if (SyncPacketCheck(pData)){
+		CString strLogSrc;
+		strLogSrc.Format(_T("REV----%02X%02X%02X%02X%02X%02X%02X\n\r"), pData->cStart, pData->cCmdType, pData->cBody[0], pData->cBody[1], pData->cBody[2], pData->cBody[3], pData->cEnd);
+		theApp.InsertDebugLog(strLogSrc, LOG_PLCSOCKET);
 		switch (pData->cCmdType){
 		case CMDTYPE_QUERYALIVE:
 			TRACE("igonre query alive cmd \n");
@@ -108,7 +112,12 @@ bool CAsyncSocketSession::ParseCommand(PLC_CMDEX_PACKET *pData)
 			}
 			break;
 		default:
-			TRACE("Unknown Command Type! \n");
+			{
+				TRACE("Unknown Command Type! \n");
+				CString strMsg;
+				strMsg.Format(L"Unknown Command Type!");
+				theApp.InsertDebugLog(strMsg, LOG_PLCSOCKET);
+			}
 			break;
 		}
 	}

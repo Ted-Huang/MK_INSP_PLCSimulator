@@ -54,6 +54,9 @@
     <ClInclude Include="PLC_PACKET\AsyncSocketSession.h">
       <Filter>PLC_PACKET</Filter>
     </ClInclude>
+    <ClInclude Include="SharedComponent\AppLogProcess.h">
+      <Filter>SharedComponent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MK_INSP_PLCSimulator.cpp">
@@ -76,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="PLC_PACKET\AsyncSocketSession.cpp">
       <Filter>PLC_PACKET</Filter>
+    </ClCompile>
+    <ClCompile Include="SharedComponent\AppLogProcess.cpp">
+      <Filter>SharedComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

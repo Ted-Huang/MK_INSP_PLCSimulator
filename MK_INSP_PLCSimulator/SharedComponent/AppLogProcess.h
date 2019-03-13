@@ -26,6 +26,7 @@ enum AOI_LOG_TYPE{
 	LOG_SOLENOID,
 	LOG_CHANGE_CLIENT,
 	LOG_PLCSOCKET,
+	LOG_PLCQUERYALIVE,
 	LOG_TYPE_MAX
 };
 
@@ -58,6 +59,7 @@ const LOG_ITEM_INFO ctLOG_INFO[] = {
 	{ LOG_SOLENOID, _T("Solenoid.log"), _LOG_SIZE },
 	{ LOG_CHANGE_CLIENT, _T("AoiChangeClient.log"), _LOG_SIZE },
 	{ LOG_PLCSOCKET, _T("PLCSocket.log"), _LOG_SIZE },
+	{ LOG_PLCQUERYALIVE, _T("PLCSocketQueryAlive.log"), _LOG_SIZE },
 };
 
 

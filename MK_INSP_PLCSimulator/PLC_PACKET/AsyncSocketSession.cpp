@@ -97,22 +97,27 @@ bool CAsyncSocketSession::ParseCommand(PLC_CMDEX_PACKET *pData)
 {
 	bool bFlag = false;
 	if (SyncPacketCheck(pData)){
-		CString strLogSrc;
-		strLogSrc.Format(_T("REV----%02X%02X%02X%02X%02X%02X%02X"), pData->cStart, pData->cCmdType, pData->cBody[0], pData->cBody[1], pData->cBody[2], pData->cBody[3], pData->cEnd);
-		theApp.InsertDebugLog(strLogSrc, LOG_PLCSOCKET);
-		DumpFieldCmdLog((PLC_CMD_FIELD_BODY*)pData->cBody);
+
 		switch (pData->cCmdType){
 		case CMDTYPE_QUERYALIVE:
 			{
-				CString strMsg;
-				strMsg.Format(L"igonre query alive cmd");
-				TRACE(strMsg + L"\n");
+				CString strLogSrc;
+				strLogSrc.Format(_T("REV----%02X%02X%02X%02X%02X%02X%02X"), pData->cStart, pData->cCmdType, pData->cBody[0], pData->cBody[1], pData->cBody[2], pData->cBody[3], pData->cEnd);
+				theApp.InsertDebugLog(strLogSrc, LOG_PLCQUERYALIVE);
+				ParseQueryAliveCmd((PLC_CMDEX_ALIVE_BODY*)pData->cBody);
+				//CString strMsg;
+				//strMsg.Format(L"igonre query alive cmd");
+				//TRACE(strMsg + L"\n");
 
-				theApp.InsertDebugLog(strMsg, LOG_PLCSOCKET);
+				//theApp.InsertDebugLog(strMsg, LOG_PLCSOCKET);
 			}
 			break;
 		case CMDTYPE_OP:
-			{
+			{		
+				CString strLogSrc;
+				strLogSrc.Format(_T("REV----%02X%02X%02X%02X%02X%02X%02X"), pData->cStart, pData->cCmdType, pData->cBody[0], pData->cBody[1], pData->cBody[2], pData->cBody[3], pData->cEnd);
+				theApp.InsertDebugLog(strLogSrc, LOG_PLCSOCKET);
+				DumpFieldCmdLog((PLC_CMD_FIELD_BODY*)pData->cBody);
 				//PLC_CMD_FIELD_BODY* pBody = new PLC_CMD_FIELD_BODY;
 				//memcpy(pBody, pData->cBody, sizeof(PLC_CMD_FIELD_BODY));
 				OnSessionReceivePacket(this, (PLC_CMD_FIELD_BODY*)pData->cBody);
@@ -130,6 +135,63 @@ bool CAsyncSocketSession::ParseCommand(PLC_CMDEX_PACKET *pData)
 		}
 	}
 	return bFlag;
+}
+
+void CAsyncSocketSession::ParseQueryAliveCmd(PLC_CMDEX_ALIVE_BODY *pData)
+{
+	if (pData){
+
+		PLC_CMDEX_PACKET xCmd;
+		memset(&xCmd, 0, sizeof(xCmd));
+		xCmd.cStart = CMD_START;
+		xCmd.cEnd = CMD_END;
+		xCmd.cCmdType = CMDTYPE_QUERYALIVE;
+		PLC_CMDEX_ALIVE_BODY *pBody = (PLC_CMDEX_ALIVE_BODY*)xCmd.cBody;
+		PLC_CMDEX_ALIVE_BODY *pSrc = (PLC_CMDEX_ALIVE_BODY*)pData;
+		BOOL bSendFlag = FALSE;
+		//if (pSrc->cTypeR == 1){
+		//	pBody->cTypeS = 2;
+		//	pBody->cValS = (pSrc->cValS + 1) & 0xFF;
+
+		//	//pSrc->cTypeR = 0; //ignore column
+		//	pBody->cValR = pSrc->cValR;
+		//	bSendFlag = TRUE;
+		//}
+		if (pSrc->cTypeR == 3){ //Receive Flag Echo
+			//Record Echo Time....
+			pBody->cTypeR = 1;
+			pBody->cValR = pSrc->cValR;
+			bSendFlag = TRUE;
+		}
+		else if (pSrc->cTypeR == 1){
+			pBody->cTypeR = 3;
+			pBody->cValR = (pSrc->cValR + 1) & 0xFF;
+			bSendFlag = TRUE;
+		}
+
+		if (pSrc->cTypeS == 0){ //Send Flag Query
+			pBody->cTypeS = 2;
+			pBody->cValS = (pSrc->cValS + 1) & 0xFF;
+			bSendFlag = TRUE;
+		}
+		else if (pSrc->cTypeS == 2){
+			pBody->cTypeS = 0;
+			pBody->cValS = pSrc->cValS;
+			bSendFlag = TRUE;
+		}
+		if (bSendFlag){
+
+			Send(&xCmd, sizeof(xCmd));
+			CString strLogDst;
+			strLogDst.Format(_T("SEND---%02X%02X%02X%02X%02X%02X%02X"), xCmd.cStart, xCmd.cCmdType, xCmd.cBody[0], xCmd.cBody[1], xCmd.cBody[2], xCmd.cBody[3], xCmd.cEnd);
+			theApp.InsertDebugLog(strLogDst, LOG_PLCQUERYALIVE);
+		}
+		else{
+			CString strLogDst;
+			strLogDst.Format(_T("weird query alive---%02X%02X%02X%02X"), pData->cTypeS, pData->cValS, pData->cTypeR, pData->cValR);
+			theApp.InsertDebugLog(strLogDst, LOG_PLCQUERYALIVE);
+		}
+	}
 }
 
 void CAsyncSocketSession::DumpFieldCmdLog(PLC_CMD_FIELD_BODY *pData)

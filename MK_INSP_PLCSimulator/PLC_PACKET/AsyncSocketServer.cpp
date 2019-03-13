@@ -46,7 +46,7 @@ void CAsyncSocketServer::SendData(BYTE cCmdType, BYTE* pData)
 		it++;
 	}
 	CString strLogSrc;
-	strLogSrc.Format(_T("SEND----%02X%02X%02X%02X%02X%02X%02X"), xPacket.cStart, xPacket.cCmdType, xPacket.cBody[0], xPacket.cBody[1], xPacket.cBody[2], xPacket.cBody[3], xPacket.cEnd);
+	strLogSrc.Format(_T("SEND---%02X%02X%02X%02X%02X%02X%02X"), xPacket.cStart, xPacket.cCmdType, xPacket.cBody[0], xPacket.cBody[1], xPacket.cBody[2], xPacket.cBody[3], xPacket.cEnd);
 	theApp.InsertDebugLog(strLogSrc, LOG_PLCSOCKET);
 }
 

@@ -2,6 +2,101 @@
 #include "AsyncSocketSession.h"
 #include "MK_INSP_PLCSimulator.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
+
+IMPLEMENT_DYNCREATE(CQueryAliveThread, CWinThread)
+
+CQueryAliveThread::CQueryAliveThread()
+{
+
+}
+void CQueryAliveThread::SetSession(CAsyncSocketSession* pSession)
+{
+	m_pSession = pSession;
+}
+CQueryAliveThread::~CQueryAliveThread()
+{
+
+}
+BOOL CQueryAliveThread::InitInstance()
+{
+	return TRUE;
+}
+
+int CQueryAliveThread::ExitInstance()
+{
+	return CWinThread::ExitInstance();
+}
+
+BEGIN_MESSAGE_MAP(CQueryAliveThread, CWinThread)
+	ON_THREAD_MESSAGE(WM_QUERYALIVEMSG, OnQueryAliveMessage)
+END_MESSAGE_MAP()
+
+void CQueryAliveThread::OnQueryAliveMessage(WPARAM wParam, LPARAM lParam)
+{
+	switch (wParam){
+	case IDM_QUERYALIVEQUIT_MSG:
+		AfxEndThread(0);
+		break;
+	case IDM_QUERYALIVESEND_MSG:
+		{	
+			PLC_CMDEX_ALIVE_BODY *pSrc = (PLC_CMDEX_ALIVE_BODY*)lParam;
+			if (!pSrc)
+				return;
+
+			PLC_CMDEX_PACKET xCmd;
+			memset(&xCmd, 0, sizeof(xCmd));
+			PLC_CMDEX_ALIVE_BODY *pBody = (PLC_CMDEX_ALIVE_BODY*)xCmd.cBody;
+			xCmd.cStart = CMD_START;
+			xCmd.cEnd = CMD_END;
+			xCmd.cCmdType = CMDTYPE_QUERYALIVE;
+			
+			BOOL bSendFlag = FALSE;
+
+			if (pSrc->cTypeR == 3){ //Receive Flag Echo
+				//Record Echo Time....
+				pBody->cTypeR = 1;
+				pBody->cValR = pSrc->cValR;
+				bSendFlag = TRUE;
+			}
+			else if (pSrc->cTypeR == 1){
+				pBody->cTypeR = 3;
+				pBody->cValR = (pSrc->cValR + 1) & 0xFF;
+				bSendFlag = TRUE;
+			}
+
+			if (pSrc->cTypeS == 0){ //Send Flag Query
+				pBody->cTypeS = 2;
+				pBody->cValS = (pSrc->cValS + 1) & 0xFF;
+				bSendFlag = TRUE;
+			}
+			else if (pSrc->cTypeS == 2){
+				pBody->cTypeS = 0;
+				pBody->cValS = pSrc->cValS;
+				bSendFlag = TRUE;
+			}
+			if (bSendFlag){
+				if (m_pSession){
+					m_pSession->Send(&xCmd, sizeof(xCmd));
+				}
+				//CString strLogDst;
+				//strLogDst.Format(_T("SEND---%02X%02X%02X%02X%02X%02X%02X"), xCmd.cStart, xCmd.cCmdType, xCmd.cBody[0], xCmd.cBody[1], xCmd.cBody[2], xCmd.cBody[3], xCmd.cEnd);
+				//theApp.InsertDebugLog(strLogDst, LOG_PLCQUERYALIVE);
+			}
+			else{
+				//CString strLogDst;
+				//strLogDst.Format(_T("weird query alive---%02X%02X%02X%02X"), pData->cTypeS, pData->cValS, pData->cTypeR, pData->cValR);
+				//theApp.InsertDebugLog(strLogDst, LOG_PLCQUERYALIVE);
+			}
+			if (pSrc)
+				delete pSrc;
+		}
+		break;
+	}
+}
+
 CAsyncSocketSession::CAsyncSocketSession()
 {
 	Init();
@@ -9,7 +104,10 @@ CAsyncSocketSession::CAsyncSocketSession()
 
 CAsyncSocketSession::~CAsyncSocketSession()
 {
-
+	if (m_pQueryAliveThread){
+		m_pQueryAliveThread->PostThreadMessage(WM_QUERYALIVEMSG, IDM_QUERYALIVEQUIT_MSG, NULL);
+		m_pQueryAliveThread = NULL;
+	}
 }
 
 void CAsyncSocketSession::Init()
@@ -18,6 +116,9 @@ void CAsyncSocketSession::Init()
 	m_nSendSize = 0;
 	memset(m_cReceiveBuf, 0, sizeof(m_cReceiveBuf));
 	memset(m_cSendBuf, 0, sizeof(m_cSendBuf));
+	m_pQueryAliveThread = AfxBeginThread(RUNTIME_CLASS(CQueryAliveThread), THREAD_PRIORITY_NORMAL, 0, CREATE_SUSPENDED);
+	((CQueryAliveThread*)m_pQueryAliveThread)->SetSession(this);
+	m_pQueryAliveThread->ResumeThread();
 }
 
 
@@ -135,50 +236,12 @@ bool CAsyncSocketSession::ParseCommand(PLC_CMDEX_PACKET *pData)
 void CAsyncSocketSession::ParseQueryAliveCmd(PLC_CMDEX_ALIVE_BODY *pData)
 {
 	if (pData){
-
-		PLC_CMDEX_PACKET xCmd;
-		memset(&xCmd, 0, sizeof(xCmd));
-		xCmd.cStart = CMD_START;
-		xCmd.cEnd = CMD_END;
-		xCmd.cCmdType = CMDTYPE_QUERYALIVE;
-		PLC_CMDEX_ALIVE_BODY *pBody = (PLC_CMDEX_ALIVE_BODY*)xCmd.cBody;
-		PLC_CMDEX_ALIVE_BODY *pSrc = (PLC_CMDEX_ALIVE_BODY*)pData;
-		BOOL bSendFlag = FALSE;
-
-		if (pSrc->cTypeR == 3){ //Receive Flag Echo
-			//Record Echo Time....
-			pBody->cTypeR = 1;
-			pBody->cValR = pSrc->cValR;
-			bSendFlag = TRUE;
+		if (m_pQueryAliveThread){
+			PLC_CMDEX_ALIVE_BODY* pBody = new PLC_CMDEX_ALIVE_BODY;
+			memcpy(pBody, pData, sizeof(PLC_CMDEX_ALIVE_BODY));
+			m_pQueryAliveThread->PostThreadMessage(WM_QUERYALIVEMSG, IDM_QUERYALIVESEND_MSG, (LPARAM)pBody);
 		}
-		else if (pSrc->cTypeR == 1){
-			pBody->cTypeR = 3;
-			pBody->cValR = (pSrc->cValR + 1) & 0xFF;
-			bSendFlag = TRUE;
-		}
-
-		if (pSrc->cTypeS == 0){ //Send Flag Query
-			pBody->cTypeS = 2;
-			pBody->cValS = (pSrc->cValS + 1) & 0xFF;
-			bSendFlag = TRUE;
-		}
-		else if (pSrc->cTypeS == 2){
-			pBody->cTypeS = 0;
-			pBody->cValS = pSrc->cValS;
-			bSendFlag = TRUE;
-		}
-		if (bSendFlag){
-
-			Send(&xCmd, sizeof(xCmd));
-			//CString strLogDst;
-			//strLogDst.Format(_T("SEND---%02X%02X%02X%02X%02X%02X%02X"), xCmd.cStart, xCmd.cCmdType, xCmd.cBody[0], xCmd.cBody[1], xCmd.cBody[2], xCmd.cBody[3], xCmd.cEnd);
-			//theApp.InsertDebugLog(strLogDst, LOG_PLCQUERYALIVE);
-		}
-		else{
-			//CString strLogDst;
-			//strLogDst.Format(_T("weird query alive---%02X%02X%02X%02X"), pData->cTypeS, pData->cValS, pData->cTypeR, pData->cValR);
-			//theApp.InsertDebugLog(strLogDst, LOG_PLCQUERYALIVE);
-		}
+		
 	}
 }
 

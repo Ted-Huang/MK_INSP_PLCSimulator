@@ -2,8 +2,29 @@
 #include "afxsock.h"
 #include "PLC_PACKET_const.h"
 
+#define WM_QUERYALIVEMSG			(WM_APP+2000)
+#define IDM_QUERYALIVEQUIT_MSG	(WM_APP+2001)
+#define IDM_QUERYALIVESEND_MSG	(WM_APP+2002)
+
 #define MAX_RECEIVE_BUFFER_SIZE 64000
 #define MAX_SEND_BUFFER_SIZE 16000
+class CAsyncSocketSession;
+class CQueryAliveThread :
+	public CWinThread
+{
+	DECLARE_DYNCREATE(CQueryAliveThread)
+public:
+	CQueryAliveThread();
+	void SetSession(CAsyncSocketSession* pSession);
+	~CQueryAliveThread();
+	virtual BOOL InitInstance();
+	virtual int ExitInstance();
+protected:
+	DECLARE_MESSAGE_MAP()
+	void OnQueryAliveMessage(WPARAM wParam, LPARAM lParam);
+private:
+	CAsyncSocketSession* m_pSession;
+};
 
 class ISESSION_NOTIFY
 {
@@ -75,4 +96,6 @@ private:
 	BYTE m_cReceiveBuf[MAX_RECEIVE_BUFFER_SIZE];
 	int m_nSendSize;
 	BYTE m_cSendBuf[MAX_SEND_BUFFER_SIZE];
+
+	CWinThread* m_pQueryAliveThread;
 };

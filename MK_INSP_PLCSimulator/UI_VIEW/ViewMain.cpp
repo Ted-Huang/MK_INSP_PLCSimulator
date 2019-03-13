@@ -688,11 +688,24 @@ void CViewMain::DoSessionReceivePacket(void *pInstance, PLC_CMD_FIELD_BODY* pBod
 				m_xUi[UI_lABEL_CAMDIR_RESP].pLabel->SetWindowText(L"set CAM_DIR done");
 				bDump = FALSE;
 			}
+			else if (pBody->cOpCode == OPCODE_QUERY){
+				bDump = FALSE;
+				OnSendCamDir();
+			}
 			break;
 		case FIELD_BAR_WIDTH:
 			if (pBody->cOpCode == OPCODE_ECHO){
 				m_xUi[UI_lABEL_BARWIDTH_RESP].pLabel->SetWindowText(L"set BAR_WIDTH done");
 				bDump = FALSE;
+			}
+			else if (pBody->cOpCode == OPCODE_QUERY){
+				bDump = FALSE;
+				CString strBarWidth;
+				m_xUi[UI_EDIT_BARWIDTH].pEdit->GetWindowText(strBarWidth);
+				if (strBarWidth.GetLength() == 0){
+					m_xUi[UI_EDIT_BARWIDTH].pEdit->SetWindowText(L"100"); // set default barwidth to 1 mm
+				}
+				OnSendBarWidth();
 			}
 			break;
 		case FIELD_CAM_ONLINE: //¬Û¾÷ª¬ºA

@@ -101,15 +101,10 @@ bool CAsyncSocketSession::ParseCommand(PLC_CMDEX_PACKET *pData)
 		switch (pData->cCmdType){
 		case CMDTYPE_QUERYALIVE:
 			{
-				CString strLogSrc;
-				strLogSrc.Format(_T("REV----%02X%02X%02X%02X%02X%02X%02X"), pData->cStart, pData->cCmdType, pData->cBody[0], pData->cBody[1], pData->cBody[2], pData->cBody[3], pData->cEnd);
-				theApp.InsertDebugLog(strLogSrc, LOG_PLCQUERYALIVE);
+				//CString strLogSrc;
+				//strLogSrc.Format(_T("REV----%02X%02X%02X%02X%02X%02X%02X"), pData->cStart, pData->cCmdType, pData->cBody[0], pData->cBody[1], pData->cBody[2], pData->cBody[3], pData->cEnd);
+				//theApp.InsertDebugLog(strLogSrc, LOG_PLCQUERYALIVE);
 				ParseQueryAliveCmd((PLC_CMDEX_ALIVE_BODY*)pData->cBody);
-				//CString strMsg;
-				//strMsg.Format(L"igonre query alive cmd");
-				//TRACE(strMsg + L"\n");
-
-				//theApp.InsertDebugLog(strMsg, LOG_PLCSOCKET);
 			}
 			break;
 		case CMDTYPE_OP:
@@ -175,14 +170,14 @@ void CAsyncSocketSession::ParseQueryAliveCmd(PLC_CMDEX_ALIVE_BODY *pData)
 		if (bSendFlag){
 
 			Send(&xCmd, sizeof(xCmd));
-			CString strLogDst;
-			strLogDst.Format(_T("SEND---%02X%02X%02X%02X%02X%02X%02X"), xCmd.cStart, xCmd.cCmdType, xCmd.cBody[0], xCmd.cBody[1], xCmd.cBody[2], xCmd.cBody[3], xCmd.cEnd);
-			theApp.InsertDebugLog(strLogDst, LOG_PLCQUERYALIVE);
+			//CString strLogDst;
+			//strLogDst.Format(_T("SEND---%02X%02X%02X%02X%02X%02X%02X"), xCmd.cStart, xCmd.cCmdType, xCmd.cBody[0], xCmd.cBody[1], xCmd.cBody[2], xCmd.cBody[3], xCmd.cEnd);
+			//theApp.InsertDebugLog(strLogDst, LOG_PLCQUERYALIVE);
 		}
 		else{
-			CString strLogDst;
-			strLogDst.Format(_T("weird query alive---%02X%02X%02X%02X"), pData->cTypeS, pData->cValS, pData->cTypeR, pData->cValR);
-			theApp.InsertDebugLog(strLogDst, LOG_PLCQUERYALIVE);
+			//CString strLogDst;
+			//strLogDst.Format(_T("weird query alive---%02X%02X%02X%02X"), pData->cTypeS, pData->cValS, pData->cTypeR, pData->cValR);
+			//theApp.InsertDebugLog(strLogDst, LOG_PLCQUERYALIVE);
 		}
 	}
 }

@@ -100,6 +100,7 @@ bool CAsyncSocketSession::ParseCommand(PLC_CMDEX_PACKET *pData)
 		CString strLogSrc;
 		strLogSrc.Format(_T("REV----%02X%02X%02X%02X%02X%02X%02X"), pData->cStart, pData->cCmdType, pData->cBody[0], pData->cBody[1], pData->cBody[2], pData->cBody[3], pData->cEnd);
 		theApp.InsertDebugLog(strLogSrc, LOG_PLCSOCKET);
+		DumpFieldCmdLog((PLC_CMD_FIELD_BODY*)pData->cBody);
 		switch (pData->cCmdType){
 		case CMDTYPE_QUERYALIVE:
 			{
@@ -112,9 +113,9 @@ bool CAsyncSocketSession::ParseCommand(PLC_CMDEX_PACKET *pData)
 			break;
 		case CMDTYPE_OP:
 			{
-				PLC_CMD_FIELD_BODY* pBody = new PLC_CMD_FIELD_BODY;
-				memcpy(pBody, pData->cBody, sizeof(PLC_CMD_FIELD_BODY));
-				OnSessionReceivePacket(this, pBody);
+				//PLC_CMD_FIELD_BODY* pBody = new PLC_CMD_FIELD_BODY;
+				//memcpy(pBody, pData->cBody, sizeof(PLC_CMD_FIELD_BODY));
+				OnSessionReceivePacket(this, (PLC_CMD_FIELD_BODY*)pData->cBody);
 			}
 			break;
 		default:
@@ -131,6 +132,84 @@ bool CAsyncSocketSession::ParseCommand(PLC_CMDEX_PACKET *pData)
 	return bFlag;
 }
 
+void CAsyncSocketSession::DumpFieldCmdLog(PLC_CMD_FIELD_BODY *pData)
+{
+	PLC_CMD_FIELD_BODY *pBody = (PLC_CMD_FIELD_BODY*)pData;
+	//if (pBody->cOpCode == 1){
+		CString strLog;
+		CString strTemp;
+		switch (pBody->cCh){
+		case 0:
+			strTemp = _T("CAM(ROLL)");
+			break;
+		case 1:
+			strTemp = _T("CAM(OP)");
+			break;
+		case 2:
+			strTemp = _T("CAM(SIDE)");
+			break;
+		case 15:
+			strTemp = _T("CAM(ALL)");
+			break;
+		}
+		strLog += strTemp;
+		switch (pBody->cField){
+		case FIELD_INSP_RESULT:			//對應原本的 COM.VALUE
+			strTemp = _T("--FIELD_INSP_RESULT--");
+			break;
+		case FIELD_INSP_ERR:			//對應原本的 COM.ERROR
+			strTemp = _T("--FIELD_INSP_ERR--");
+			break;
+		case FIELD_INSP_TOGGLEBIT:	//對應原本的 COM.TOGGLEBIT
+			strTemp = _T("--FIELD_INSP_TOGGLEBIT--");
+			break;
+		case FIELD_INSP_MODE:		//對應原本的 MODE.SOLL
+			strTemp = _T("--FIELD_INSP_MODE--");
+			break;
+		case FIELD_INSP_VERIFY:		//對應原本的 COM.VERIFY
+			strTemp = _T("--FIELD_INSP_VERIFY--");
+			break;
+		case FIELD_CAM_ONLINE:		//對應原本的 COM.ONLINE
+			strTemp = _T("--FIELD_CAM_ONLINE--");
+			break;
+		case FIELD_CAM_DIR:			//對應原本的 COM.DIRECTION
+			strTemp = _T("--FIELD_CAM_DIR--");
+			break;
+		case FIELD_CAM_IMG_RECVBIT:	//對應原本的 COM.IMGRECEIVEBIT
+			strTemp = _T("--FIELD_CAM_IMG_RECVBIT--");
+			break;
+		case FIELD_BAR_WIDTH:		//對應	  MARKWIDTH
+			strTemp = _T("--FIELD_BAR_WIDTH--");
+			break;
+		case FIELD_GOLDEN_RESET:		//通知系統 Golden Reset
+			strTemp = _T("--FIELD_GOLDEN_RESET--");
+			break;
+		case FIELD_VERIFY_RESET:		//通知系統 Verify Golden Image Reset
+			strTemp = _T("--FIELD_VERIFY_RESET--");
+			break;
+		case FIELD_GOLDEN_READY:		//通知PLC端 Golden Ready
+			strTemp = _T("--FIELD_GOLDEN_READY--");
+			break;
+		case FIELD_VERIFY_READY:		//通知PLC端 Verify Golden Ready
+			strTemp = _T("--FIELD_VERIFY_READY--");
+			break;
+		case FIELD_INSP_TRIGGER:		//通知系統 進行檢測
+			strTemp = _T("--FIELD_INSP_TRIGGER--");
+			break;
+		case FIELD_INSP_VERIFY_TRIGGER://通知系統 進行2次校驗
+			strTemp = _T("--FIELD_INSP_VERIFY_TRIGGER--");
+			break;
+		case FIELD_INSP_VERIFY_RESULT:
+			strTemp = _T("--FIELD_INSP_VERIFY_RESULT--");
+			break;
+		}
+		strLog += strTemp;
+		strTemp.Format(_T("Value(%d)"), (int)pBody->wValue);
+		strLog += strTemp;
+		theApp.InsertDebugLog(strLog, LOG_PLCSOCKET);
+	//}
+	
+}
 bool CAsyncSocketSession::SyncPacketCheck(PLC_CMDEX_PACKET* pData)
 {
 	return pData->cStart == CMD_START && pData->cEnd == CMD_END;

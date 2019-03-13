@@ -749,7 +749,7 @@ void CViewMain::DoSessionReceivePacket(void *pInstance, PLC_CMD_FIELD_BODY* pBod
 			TRACE(strMsg);
 			theApp.InsertDebugLog(strMsg, LOG_PLCSOCKET);
 		}
-		delete pBody;
+		//delete pBody;
 	}
 
 }

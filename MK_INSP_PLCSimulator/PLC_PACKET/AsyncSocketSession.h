@@ -66,6 +66,7 @@ private:
 	void CheckDataBuf();
 	void MovePacketToStart(BYTE **ppCurrent, int &DataSize);
 	bool ParseCommand(PLC_CMDEX_PACKET *pData);
+	void DumpFieldCmdLog(PLC_CMD_FIELD_BODY *pData);
 	bool SyncPacketCheck(PLC_CMDEX_PACKET* pData);
 
 private:

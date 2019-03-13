@@ -46,7 +46,7 @@ void CAsyncSocketServer::SendData(BYTE cCmdType, BYTE* pData)
 		it++;
 	}
 	CString strLogSrc;
-	strLogSrc.Format(_T("SEND----%02X%02X%02X%02X%02X%02X%02X\n\r"), xPacket.cStart, xPacket.cCmdType, xPacket.cBody[0], xPacket.cBody[1], xPacket.cBody[2], xPacket.cBody[3], xPacket.cEnd);
+	strLogSrc.Format(_T("SEND----%02X%02X%02X%02X%02X%02X%02X"), xPacket.cStart, xPacket.cCmdType, xPacket.cBody[0], xPacket.cBody[1], xPacket.cBody[2], xPacket.cBody[3], xPacket.cEnd);
 	theApp.InsertDebugLog(strLogSrc, LOG_PLCSOCKET);
 }
 
@@ -89,8 +89,8 @@ void CAsyncSocketServer::DoSocketNotify(void *pInstance, long ErrorId)
 	default:
 		{
 			CString strMsg;
-			strMsg.Format(L"CAsyncSocketServer::DoSocketNotify msg %d not implement \n", ErrorId);
-			TRACE(strMsg);
+			strMsg.Format(L"CAsyncSocketServer::DoSocketNotify msg %d not implement", ErrorId);
+			TRACE(strMsg + L"\n");
 			theApp.InsertDebugLog(strMsg, LOG_PLCSOCKET);
 		}
 	

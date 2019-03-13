@@ -98,11 +98,17 @@ bool CAsyncSocketSession::ParseCommand(PLC_CMDEX_PACKET *pData)
 	bool bFlag = false;
 	if (SyncPacketCheck(pData)){
 		CString strLogSrc;
-		strLogSrc.Format(_T("REV----%02X%02X%02X%02X%02X%02X%02X\n\r"), pData->cStart, pData->cCmdType, pData->cBody[0], pData->cBody[1], pData->cBody[2], pData->cBody[3], pData->cEnd);
+		strLogSrc.Format(_T("REV----%02X%02X%02X%02X%02X%02X%02X"), pData->cStart, pData->cCmdType, pData->cBody[0], pData->cBody[1], pData->cBody[2], pData->cBody[3], pData->cEnd);
 		theApp.InsertDebugLog(strLogSrc, LOG_PLCSOCKET);
 		switch (pData->cCmdType){
 		case CMDTYPE_QUERYALIVE:
-			TRACE("igonre query alive cmd \n");
+			{
+				CString strMsg;
+				strMsg.Format(L"igonre query alive cmd");
+				TRACE(strMsg + L"\n");
+
+				theApp.InsertDebugLog(strMsg, LOG_PLCSOCKET);
+			}
 			break;
 		case CMDTYPE_OP:
 			{
@@ -113,9 +119,10 @@ bool CAsyncSocketSession::ParseCommand(PLC_CMDEX_PACKET *pData)
 			break;
 		default:
 			{
-				TRACE("Unknown Command Type! \n");
 				CString strMsg;
 				strMsg.Format(L"Unknown Command Type!");
+				TRACE(strMsg + L"\n");
+
 				theApp.InsertDebugLog(strMsg, LOG_PLCSOCKET);
 			}
 			break;

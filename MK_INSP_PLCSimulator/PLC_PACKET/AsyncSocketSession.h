@@ -6,23 +6,25 @@
 #define IDM_SOCKETTHREADQUIT_MSG		(WM_APP+2001)
 #define IDM_QUERYALIVESEND_MSG			(WM_APP+2002)
 #define IDM_UPDATEUI_MSG				(WM_APP+2003)
+#define IDM_LOG_MSG				(WM_APP+2003)
 
 #define MAX_RECEIVE_BUFFER_SIZE 64000
 #define MAX_SEND_BUFFER_SIZE 16000
 class CAsyncSocketSession;
-class CQueryAliveThread :
+class CSocketThread :
 	public CWinThread
 {
-	DECLARE_DYNCREATE(CQueryAliveThread)
+	DECLARE_DYNCREATE(CSocketThread)
 public:
-	CQueryAliveThread();
+	CSocketThread();
 	void SetSession(CAsyncSocketSession* pSession);
-	~CQueryAliveThread();
+	~CSocketThread();
 	virtual BOOL InitInstance();
 	virtual int ExitInstance();
 protected:
 	DECLARE_MESSAGE_MAP()
 	void OnSocketMessage(WPARAM wParam, LPARAM lParam);
+	void DumpFieldCmdLog(PLC_CMD_FIELD_BODY *pData);
 private:
 	CAsyncSocketSession* m_pSession;
 };
@@ -98,5 +100,6 @@ private:
 	int m_nSendSize;
 	BYTE m_cSendBuf[MAX_SEND_BUFFER_SIZE];
 
-	CWinThread* m_pQueryAliveThread;
+	CWinThread* m_pSocketThread;
+	//LARGE_INTEGER freq, t1, t2;
 };

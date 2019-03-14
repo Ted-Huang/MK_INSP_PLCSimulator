@@ -795,6 +795,7 @@ void CViewMain::DoSessionReceivePacket(void *pInstance, PLC_CMD_FIELD_BODY* pBod
 				PLC_CMD_FIELD_BODY* pNewBody = new PLC_CMD_FIELD_BODY;
 				memcpy(pNewBody, pBody, sizeof(PLC_CMD_FIELD_BODY));
 				m_pUpdateUIThread->PostThreadMessage(WM_SOCKETMSG, IDM_UPDATEUI_MSG, (LPARAM)pNewBody);
+				bDump = FALSE;
 			}
 			break;
 		case FIELD_INSP_RESULT:

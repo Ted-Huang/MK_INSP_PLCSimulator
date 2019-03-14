@@ -5,6 +5,50 @@
 #include "PLC_PACKET\AsyncSocketServer.h"
 #include "MK_INSP_PLCSimulator.h"
 
+IMPLEMENT_DYNCREATE(CUIThread, CWinThread)
+
+CUIThread::CUIThread()
+{
+
+}
+void CUIThread::SetView(CViewMain* pView)
+{
+	m_pViewMain = pView;
+}
+CUIThread::~CUIThread()
+{
+
+}
+BOOL CUIThread::InitInstance()
+{
+	return TRUE;
+}
+
+int CUIThread::ExitInstance()
+{
+	return CWinThread::ExitInstance();
+}
+
+BEGIN_MESSAGE_MAP(CUIThread, CWinThread)
+	ON_THREAD_MESSAGE(WM_SOCKETMSG, OnSocketMessage)
+END_MESSAGE_MAP()
+
+void CUIThread::OnSocketMessage(WPARAM wParam, LPARAM lParam)
+{
+	switch (wParam){
+	case IDM_SOCKETTHREADQUIT_MSG:
+		AfxEndThread(0);
+		break;
+	case IDM_UPDATEUI_MSG:
+	{
+		if (m_pViewMain){
+			m_pViewMain->UpdateUI((PLC_CMD_FIELD_BODY*)lParam);
+		}
+	}
+	break;
+	}
+}
+
 CViewMain::CViewMain(RECT &rcTarget, CWnd *pParent, UINT ResourceId)
 {
 	Init();
@@ -29,6 +73,51 @@ CViewMain::~CViewMain()
 		delete m_pServer;
 		m_pServer = NULL;
 	}
+	if (m_pUpdateUIThread){
+		m_pUpdateUIThread->PostThreadMessage(WM_SOCKETMSG, IDM_SOCKETTHREADQUIT_MSG, NULL);
+		m_pUpdateUIThread = NULL;
+	}
+}
+
+void CViewMain::UpdateUI(PLC_CMD_FIELD_BODY* pBody)
+{
+	if (pBody){
+		switch (pBody->cField){
+		case FIELD_CAM_DIR:
+			if (pBody->cOpCode == OPCODE_ECHO){
+				m_xUi[UI_lABEL_CAMDIR_RESP].pLabel->SetWindowText(L"set CAM_DIR done");
+			}
+			else if (pBody->cOpCode == OPCODE_QUERY){
+				OnSendCamDir();
+			}
+			break;
+		case FIELD_BAR_WIDTH:
+			if (pBody->cOpCode == OPCODE_ECHO){
+				m_xUi[UI_lABEL_BARWIDTH_RESP].pLabel->SetWindowText(L"set BAR_WIDTH done");
+			}
+			else if (pBody->cOpCode == OPCODE_QUERY){
+				CString strBarWidth;
+				m_xUi[UI_EDIT_BARWIDTH].pEdit->GetWindowText(strBarWidth);
+				if (strBarWidth.GetLength() == 0){
+					m_xUi[UI_EDIT_BARWIDTH].pEdit->SetWindowText(L"100"); // set default barwidth to 1 mm
+				}
+				OnSendBarWidth();
+			}
+			break;
+		case FIELD_CAM_ONLINE: //相機狀態
+		case FIELD_INSP_VERIFY: //2次校驗
+		case FIELD_INSP_MODE: //檢測類別
+		case FIELD_GOLDEN_READY: //Golden Ready
+		case FIELD_VERIFY_READY: //Verify Ready
+		case FIELD_GOLDEN_RESET: //Golden reset
+		case FIELD_VERIFY_RESET: //Verify reset
+			if (pBody->cOpCode == OPCODE_SET){
+				SetListCtrl(UI_LIST_INFO, pBody);
+			}
+			break;
+		}
+		delete pBody;
+	}
 }
 
 void CViewMain::Init()
@@ -39,6 +128,9 @@ void CViewMain::Init()
 	memset(arInspTime, 0, sizeof(arInspTime));
 	memset(arVerifyTime, 0, sizeof(arVerifyTime));
 	memset(arIMGRCVTime, 0, sizeof(arIMGRCVTime));
+	m_pUpdateUIThread = AfxBeginThread(RUNTIME_CLASS(CUIThread), THREAD_PRIORITY_NORMAL, 0, CREATE_SUSPENDED);
+	((CUIThread*)m_pUpdateUIThread)->SetView(this);
+	m_pUpdateUIThread->ResumeThread();
 }
 
 void CViewMain::InitUiRectPos()
@@ -205,8 +297,12 @@ void CViewMain::InitUI()
 
 	m_xUi[UI_CB_EVENT].pCB->AddString(LoadResourceString(IDS_INSPTRIGGER));
 	m_xUi[UI_CB_EVENT].pCB->AddString(LoadResourceString(IDS_INSPVERIFY));
+	m_xUi[UI_CB_EVENT].pCB->AddString(LoadResourceString(IDS_PREPARE_GOLDENIMG));
+	m_xUi[UI_CB_EVENT].pCB->AddString(LoadResourceString(IDS_PREPARE_VERIFYIMG));
 	m_xUi[UI_CB_EVENT].pCB->SetItemData(0, FIELD_INSP_TRIGGER);
 	m_xUi[UI_CB_EVENT].pCB->SetItemData(1, FIELD_INSP_VERIFY_TRIGGER);
+	m_xUi[UI_CB_EVENT].pCB->SetItemData(2, FIELD_PREPARE_GOLDENIMG);
+	m_xUi[UI_CB_EVENT].pCB->SetItemData(3, FIELD_PREPARE_VERIFYIMG);
 
 
 	m_xUi[UI_CB_EVENT].pCB->SetCurSel(0);
@@ -686,30 +782,7 @@ void CViewMain::DoSessionReceivePacket(void *pInstance, PLC_CMD_FIELD_BODY* pBod
 	if (pBody){
 		switch (pBody->cField){
 		case FIELD_CAM_DIR:
-			if (pBody->cOpCode == OPCODE_ECHO){
-				m_xUi[UI_lABEL_CAMDIR_RESP].pLabel->SetWindowText(L"set CAM_DIR done");
-				bDump = FALSE;
-			}
-			else if (pBody->cOpCode == OPCODE_QUERY){
-				bDump = FALSE;
-				OnSendCamDir();
-			}
-			break;
 		case FIELD_BAR_WIDTH:
-			if (pBody->cOpCode == OPCODE_ECHO){
-				m_xUi[UI_lABEL_BARWIDTH_RESP].pLabel->SetWindowText(L"set BAR_WIDTH done");
-				bDump = FALSE;
-			}
-			else if (pBody->cOpCode == OPCODE_QUERY){
-				bDump = FALSE;
-				CString strBarWidth;
-				m_xUi[UI_EDIT_BARWIDTH].pEdit->GetWindowText(strBarWidth);
-				if (strBarWidth.GetLength() == 0){
-					m_xUi[UI_EDIT_BARWIDTH].pEdit->SetWindowText(L"100"); // set default barwidth to 1 mm
-				}
-				OnSendBarWidth();
-			}
-			break;
 		case FIELD_CAM_ONLINE: //相機狀態
 		case FIELD_INSP_VERIFY: //2次校驗
 		case FIELD_INSP_MODE: //檢測類別
@@ -717,9 +790,11 @@ void CViewMain::DoSessionReceivePacket(void *pInstance, PLC_CMD_FIELD_BODY* pBod
 		case FIELD_VERIFY_READY: //Verify Ready
 		case FIELD_GOLDEN_RESET: //Golden reset
 		case FIELD_VERIFY_RESET: //Verify reset
-			if (pBody->cOpCode == OPCODE_SET){
-				SetListCtrl(UI_LIST_INFO, pBody);
-				bDump = FALSE;
+			//un important msg for other thread to handle
+			if (m_pUpdateUIThread){
+				PLC_CMD_FIELD_BODY* pNewBody = new PLC_CMD_FIELD_BODY;
+				memcpy(pNewBody, pBody, sizeof(PLC_CMD_FIELD_BODY));
+				m_pUpdateUIThread->PostThreadMessage(WM_SOCKETMSG, IDM_UPDATEUI_MSG, (LPARAM)pNewBody);
 			}
 			break;
 		case FIELD_INSP_RESULT:
@@ -736,6 +811,8 @@ void CViewMain::DoSessionReceivePacket(void *pInstance, PLC_CMD_FIELD_BODY* pBod
 			break;
 		case FIELD_INSP_TRIGGER:
 		case FIELD_INSP_VERIFY_TRIGGER:
+		case FIELD_PREPARE_GOLDENIMG:
+		case FIELD_PREPARE_VERIFYIMG:
 			if (pBody->cOpCode == OPCODE_ECHO){ //igonre FIELD_INSP_TRIGGER/FIELD_INSP_VERIFY_TRIGGER echo
 				bDump = FALSE;
 			}
@@ -749,7 +826,6 @@ void CViewMain::DoSessionReceivePacket(void *pInstance, PLC_CMD_FIELD_BODY* pBod
 			TRACE(strMsg);
 			theApp.InsertDebugLog(strMsg, LOG_PLCSOCKET);
 		}
-		//delete pBody;
 	}
 
 }

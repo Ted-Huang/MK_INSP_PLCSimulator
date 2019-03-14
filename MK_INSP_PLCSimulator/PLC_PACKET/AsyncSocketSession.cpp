@@ -31,13 +31,13 @@ int CQueryAliveThread::ExitInstance()
 }
 
 BEGIN_MESSAGE_MAP(CQueryAliveThread, CWinThread)
-	ON_THREAD_MESSAGE(WM_QUERYALIVEMSG, OnQueryAliveMessage)
+	ON_THREAD_MESSAGE(WM_SOCKETMSG, OnSocketMessage)
 END_MESSAGE_MAP()
 
-void CQueryAliveThread::OnQueryAliveMessage(WPARAM wParam, LPARAM lParam)
+void CQueryAliveThread::OnSocketMessage(WPARAM wParam, LPARAM lParam)
 {
 	switch (wParam){
-	case IDM_QUERYALIVEQUIT_MSG:
+	case IDM_SOCKETTHREADQUIT_MSG:
 		AfxEndThread(0);
 		break;
 	case IDM_QUERYALIVESEND_MSG:
@@ -81,14 +81,6 @@ void CQueryAliveThread::OnQueryAliveMessage(WPARAM wParam, LPARAM lParam)
 				if (m_pSession){
 					m_pSession->Send(&xCmd, sizeof(xCmd));
 				}
-				//CString strLogDst;
-				//strLogDst.Format(_T("SEND---%02X%02X%02X%02X%02X%02X%02X"), xCmd.cStart, xCmd.cCmdType, xCmd.cBody[0], xCmd.cBody[1], xCmd.cBody[2], xCmd.cBody[3], xCmd.cEnd);
-				//theApp.InsertDebugLog(strLogDst, LOG_PLCQUERYALIVE);
-			}
-			else{
-				//CString strLogDst;
-				//strLogDst.Format(_T("weird query alive---%02X%02X%02X%02X"), pData->cTypeS, pData->cValS, pData->cTypeR, pData->cValR);
-				//theApp.InsertDebugLog(strLogDst, LOG_PLCQUERYALIVE);
 			}
 			if (pSrc)
 				delete pSrc;
@@ -105,7 +97,7 @@ CAsyncSocketSession::CAsyncSocketSession()
 CAsyncSocketSession::~CAsyncSocketSession()
 {
 	if (m_pQueryAliveThread){
-		m_pQueryAliveThread->PostThreadMessage(WM_QUERYALIVEMSG, IDM_QUERYALIVEQUIT_MSG, NULL);
+		m_pQueryAliveThread->PostThreadMessage(WM_SOCKETMSG, IDM_SOCKETTHREADQUIT_MSG, NULL);
 		m_pQueryAliveThread = NULL;
 	}
 }
@@ -132,6 +124,9 @@ void CAsyncSocketSession::OnClose(int nErrorCode)
 void CAsyncSocketSession::OnReceive(int nErrorCode)
 {
 	int nRead = 0;
+	LARGE_INTEGER freq, t1, t2;
+	QueryPerformanceFrequency(&freq);
+	QueryPerformanceCounter(&t1);
 	nRead = Receive(m_cReceiveBuf + m_nReceiveSize, sizeof(m_cReceiveBuf) - m_nReceiveSize);
 	bool bSuccess = true;
 	switch (nRead){
@@ -152,6 +147,11 @@ void CAsyncSocketSession::OnReceive(int nErrorCode)
 	}
 	if (bSuccess){
 		CheckDataBuf();
+		QueryPerformanceCounter(&t2);
+		double elapsedTime = ((t2.QuadPart - t1.QuadPart) * 1000.0) / freq.QuadPart;
+		CString strMsg;
+		strMsg.Format(L"\n packet handle time %.2f\n ", elapsedTime);
+		theApp.InsertDebugLog(strMsg, LOG_PLCSOCKET);
 	}
 	else{
 		OnSocketNotify(this, ERR_SDK_SOCKET_CLOSE);
@@ -202,9 +202,6 @@ bool CAsyncSocketSession::ParseCommand(PLC_CMDEX_PACKET *pData)
 		switch (pData->cCmdType){
 		case CMDTYPE_QUERYALIVE:
 			{
-				//CString strLogSrc;
-				//strLogSrc.Format(_T("REV----%02X%02X%02X%02X%02X%02X%02X"), pData->cStart, pData->cCmdType, pData->cBody[0], pData->cBody[1], pData->cBody[2], pData->cBody[3], pData->cEnd);
-				//theApp.InsertDebugLog(strLogSrc, LOG_PLCQUERYALIVE);
 				ParseQueryAliveCmd((PLC_CMDEX_ALIVE_BODY*)pData->cBody);
 			}
 			break;
@@ -214,8 +211,6 @@ bool CAsyncSocketSession::ParseCommand(PLC_CMDEX_PACKET *pData)
 				strLogSrc.Format(_T("REV----%02X%02X%02X%02X%02X%02X%02X"), pData->cStart, pData->cCmdType, pData->cBody[0], pData->cBody[1], pData->cBody[2], pData->cBody[3], pData->cEnd);
 				theApp.InsertDebugLog(strLogSrc, LOG_PLCSOCKET);
 				DumpFieldCmdLog((PLC_CMD_FIELD_BODY*)pData->cBody);
-				//PLC_CMD_FIELD_BODY* pBody = new PLC_CMD_FIELD_BODY;
-				//memcpy(pBody, pData->cBody, sizeof(PLC_CMD_FIELD_BODY));
 				OnSessionReceivePacket(this, (PLC_CMD_FIELD_BODY*)pData->cBody);
 			}
 			break;
@@ -239,7 +234,7 @@ void CAsyncSocketSession::ParseQueryAliveCmd(PLC_CMDEX_ALIVE_BODY *pData)
 		if (m_pQueryAliveThread){
 			PLC_CMDEX_ALIVE_BODY* pBody = new PLC_CMDEX_ALIVE_BODY;
 			memcpy(pBody, pData, sizeof(PLC_CMDEX_ALIVE_BODY));
-			m_pQueryAliveThread->PostThreadMessage(WM_QUERYALIVEMSG, IDM_QUERYALIVESEND_MSG, (LPARAM)pBody);
+			m_pQueryAliveThread->PostThreadMessage(WM_SOCKETMSG, IDM_QUERYALIVESEND_MSG, (LPARAM)pBody);
 		}
 		
 	}

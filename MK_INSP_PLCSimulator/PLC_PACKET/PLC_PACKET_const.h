@@ -56,7 +56,10 @@ enum FIELD_ID_{
 	FIELD_VERIFY_RESET,		//通知系統 Verify Golden Image Reset
 	FIELD_GOLDEN_READY,		//通知PLC端 Golden Ready
 	FIELD_VERIFY_READY,		//通知PLC端 Verify Golden Ready
+	FIELD_PREPARE_GOLDENIMG,//通知系統 確認亮度,準備設定樣張
+	FIELD_PREPARE_VERIFYIMG,//通知系統 確認亮度,準備設定2次校驗樣張
 	FIELD_INSP_TRIGGER,		//通知系統 進行檢測
 	FIELD_INSP_VERIFY_TRIGGER,//通知系統 進行2次校驗
 	FIELD_INSP_VERIFY_RESULT,//2次校驗 結果
+
 };

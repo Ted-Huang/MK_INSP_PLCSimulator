@@ -2,9 +2,10 @@
 #include "afxsock.h"
 #include "PLC_PACKET_const.h"
 
-#define WM_QUERYALIVEMSG			(WM_APP+2000)
-#define IDM_QUERYALIVEQUIT_MSG	(WM_APP+2001)
-#define IDM_QUERYALIVESEND_MSG	(WM_APP+2002)
+#define WM_SOCKETMSG					(WM_APP+2000)
+#define IDM_SOCKETTHREADQUIT_MSG		(WM_APP+2001)
+#define IDM_QUERYALIVESEND_MSG			(WM_APP+2002)
+#define IDM_UPDATEUI_MSG				(WM_APP+2003)
 
 #define MAX_RECEIVE_BUFFER_SIZE 64000
 #define MAX_SEND_BUFFER_SIZE 16000
@@ -21,7 +22,7 @@ public:
 	virtual int ExitInstance();
 protected:
 	DECLARE_MESSAGE_MAP()
-	void OnQueryAliveMessage(WPARAM wParam, LPARAM lParam);
+	void OnSocketMessage(WPARAM wParam, LPARAM lParam);
 private:
 	CAsyncSocketSession* m_pSession;
 };

@@ -51,12 +51,31 @@ typedef struct UI_OBJ_{
 		};
 	}
 }UI_OBJ;
+class CViewMain;
+class CUIThread :
+	public CWinThread
+{
+	DECLARE_DYNCREATE(CUIThread)
+public:
+	CUIThread();
+	void SetView(CViewMain* pView);
+	~CUIThread();
+	virtual BOOL InitInstance();
+	virtual int ExitInstance();
+protected:
+	DECLARE_MESSAGE_MAP()
+	void OnSocketMessage(WPARAM wParam, LPARAM lParam);
+private:
+	CViewMain* m_pViewMain;
+};
 
 class CAsyncSocketServer;
 class CViewMain : public CWnd, public ISESSION_NOTIFY{
 public:
 	CViewMain(RECT &rcTarget, CWnd *pParent, UINT ResourceId);
 	~CViewMain();
+	void UpdateUI(PLC_CMD_FIELD_BODY* pBody);
+
 private:
 	void Init();
 	void InitUiRectPos();
@@ -160,7 +179,7 @@ private:
 	};
 	UI_OBJ m_xUi[UI_ITEM_END];
 	CAsyncSocketServer* m_pServer;
-
+	CWinThread* m_pUpdateUIThread;
 	//record time diff
 	LARGE_INTEGER frequency;
 	LARGE_INTEGER arInspTime[UI_ROW_MAX];

@@ -32,6 +32,8 @@
 #define IDS_CLEARALL					1024
 #define IDS_VERIFYTIME					1025
 #define IDS_VERIFYRESULT				1026
+#define IDS_PREPARE_GOLDENIMG			1027
+#define IDS_PREPARE_VERIFYIMG			1028
 // 下一個新增物件的預設值
 //
 #ifdef APSTUDIO_INVOKED

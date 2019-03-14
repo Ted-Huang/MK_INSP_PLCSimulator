@@ -81,19 +81,23 @@ CViewMain::~CViewMain()
 
 void CViewMain::UpdateUI(PLC_CMD_FIELD_BODY* pBody)
 {
+	BOOL bDump = TRUE;
 	if (pBody){
 		switch (pBody->cField){
 		case FIELD_CAM_DIR:
 			if (pBody->cOpCode == OPCODE_ECHO){
 				m_xUi[UI_lABEL_CAMDIR_RESP].pLabel->SetWindowText(L"set CAM_DIR done");
+				bDump = FALSE;
 			}
 			else if (pBody->cOpCode == OPCODE_QUERY){
 				OnSendCamDir();
+				bDump = FALSE;
 			}
 			break;
 		case FIELD_BAR_WIDTH:
 			if (pBody->cOpCode == OPCODE_ECHO){
 				m_xUi[UI_lABEL_BARWIDTH_RESP].pLabel->SetWindowText(L"set BAR_WIDTH done");
+				bDump = FALSE;
 			}
 			else if (pBody->cOpCode == OPCODE_QUERY){
 				CString strBarWidth;
@@ -102,6 +106,7 @@ void CViewMain::UpdateUI(PLC_CMD_FIELD_BODY* pBody)
 					m_xUi[UI_EDIT_BARWIDTH].pEdit->SetWindowText(L"100"); // set default barwidth to 1 mm
 				}
 				OnSendBarWidth();
+				bDump = FALSE;
 			}
 			break;
 		case FIELD_CAM_ONLINE: //相機狀態
@@ -113,10 +118,18 @@ void CViewMain::UpdateUI(PLC_CMD_FIELD_BODY* pBody)
 		case FIELD_VERIFY_RESET: //Verify reset
 			if (pBody->cOpCode == OPCODE_SET){
 				SetListCtrl(UI_LIST_INFO, pBody);
+				bDump = FALSE;
 			}
 			break;
 		}
+		if (bDump){
+			CString strMsg;
+			strMsg.Format(L"未處理訊息: %d %d %d %d \n", pBody->cCh, pBody->cField, pBody->cOpCode, pBody->wValue);
+			TRACE(strMsg);
+			theApp.InsertDebugLog(strMsg, LOG_PLCSOCKET);
+		}
 		delete pBody;
+
 	}
 }
 

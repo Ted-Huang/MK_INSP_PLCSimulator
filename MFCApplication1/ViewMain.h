@@ -9,4 +9,9 @@ public:
 private:
 	void Init();
 	COpenGLControl *m_pOgl;
+protected:
+	DECLARE_MESSAGE_MAP()
+	afx_msg void OnPaint();
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	void OnLButtonDown(UINT nFlags, CPoint point);
 };

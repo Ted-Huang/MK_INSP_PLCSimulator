@@ -5,7 +5,7 @@
 #include "AoiBaseOp.h"
 
 static int nn = 0;
-const CRect ctGL = { 10, 10, 100, 100 };
+const CRect ctGL = { 10, 10, 110, 110 };
 
 const CRect ctBtn = { 200, 200, 250, 250 };
 
@@ -61,28 +61,28 @@ CViewMain::~CViewMain()
 
 void CViewMain::Init()
 {
-	if (m_pOgl == NULL){
-		m_pOgl = new COpenGLControl();
+	//if (m_pOgl == NULL){
+	//	m_pOgl = new COpenGLControl();
 
-		//CRect rr = ctGL;
-		CRect rr = {ctGL.left + 45, ctGL.top, ctGL.left+45+ctGL.Width(), ctGL.bottom};
-		new CViewTest(rr, this, 119);
-		//m_pOgl->oglCreate(rr, this, 1231);
-		//m_pOgl->oglSetBackgroundColor(::GetSysColor(COLOR_APPWORKSPACE));
-		//m_pOgl->oglShowAnchorPoints(TRUE);
-	}
+	//	CRect rr = ctGL;
+	//	//CRect rr = {ctGL.left + 45, ctGL.top, ctGL.left+45+ctGL.Width(), ctGL.bottom};
+	//	//new CViewTest(rr, this, 119);
+	//	m_pOgl->oglCreate(rr, this, 1231);
+	//	m_pOgl->oglSetBackgroundColor(::GetSysColor(COLOR_APPWORKSPACE));
+	//	m_pOgl->oglShowAnchorPoints(TRUE);
+	//}
 
-	if (m_pOgl){
-		IMAGE *pCur = new IMAGE;
-		CString strGoldFile;
-		strGoldFile.Format(_T("D:\\AOI_TOOL\\MK_UI\\MFCApplication1\\GOLDEN\\GOLD1.bmp"));
-		unsigned char *pGoldBuf = NULL;
-		int nW = 0, nH = 0, nC = 1;
-		loadimage(strGoldFile, &pGoldBuf, &nW, &nH, &nC, READ_DEFAULT, FALSE);
-		ImageInit(pCur, IMAGE_TYPE_MONO8, pGoldBuf, nW, nH);
-		m_pOgl->oglSetTexture(pCur);
-		m_pOgl->oglDrawScene();
-	}
+	//if (m_pOgl){
+	//	IMAGE *pCur = new IMAGE;
+	//	CString strGoldFile;
+	//	strGoldFile.Format(_T("D:\\AOI_TOOL\\MK_UI\\MFCApplication1\\GOLDEN\\GOLD1.bmp"));
+	//	unsigned char *pGoldBuf = NULL;
+	//	int nW = 0, nH = 0, nC = 1;
+	//	loadimage(strGoldFile, &pGoldBuf, &nW, &nH, &nC, READ_DEFAULT, FALSE);
+	//	ImageInit(pCur, IMAGE_TYPE_MONO8, pGoldBuf, nW, nH);
+	//	m_pOgl->oglSetTexture(pCur);
+	//	m_pOgl->oglDrawScene();
+	//}
 }
 
 void CViewMain::OnPaint()
@@ -104,11 +104,50 @@ void CViewMain::OnPaint()
 	oldpen = pDC->SelectObject(&pen);
 	olbrush = pDC->SelectObject(&brush);
 
+	pDC->SelectObject(redpen);
+	
+	pDC->SetArcDirection(AD_COUNTERCLOCKWISE);
+	int nRadius = 50;
+	CRect rectClient = { 0, 0, 100, 100 };
+	CPoint p1, p2;
+	pDC->Rectangle(rectClient);
+	CRect rcRightTop = { rectClient.right - nRadius, rectClient.top, rectClient.right, nRadius };
+	CRect rcRightBottom = { rectClient.right - nRadius, rectClient.bottom - nRadius, rectClient.right, rectClient.bottom };
+	CRect rcLeftBottom = { rectClient.left, rectClient.bottom - nRadius, nRadius, rectClient.bottom };
+	CRect rcLeftTop = { rectClient.left, rectClient.top, nRadius, nRadius };
+	//right top
+	p1 = { rcRightTop.right, rcRightTop.CenterPoint().y };
+	p2 = { rcRightTop.CenterPoint().x, rcRightTop.top };
+	pDC->Arc(rcRightTop, p1, p2);
+
+	//right bottom
+	p1 = { rcRightBottom.CenterPoint().x, rcRightBottom.right };
+	p2 = { rcRightBottom.right, rcRightBottom.CenterPoint().y };
+	pDC->Arc(rcRightBottom, p1, p2);
+	
+
+	//left bottom
+	p1 = { rcLeftBottom.left, rcLeftBottom.CenterPoint().y };
+	p2 = { rcLeftBottom.CenterPoint().x, rcLeftBottom.bottom };
+	pDC->Arc(rcLeftBottom, p1, p2);
+
+	//left top 
+	p1 = { rcLeftTop.CenterPoint().x, rcLeftTop.top };
+	p2 = { rcLeftTop.left, rcLeftTop.CenterPoint().y };
+	pDC->Arc(rcLeftTop, p1, p2);
+
+
+	pDC->SelectObject(&pen);
 
 	pDC->SelectObject(&pen);
 	//pDC->RoundRect(&rc123, { 10, 10 });
-	pDC->Rectangle(rc123);
+	//pDC->Rectangle(rc123);
 
+	//pDC->MoveTo(rc123.left, rc123.top);
+	//pDC->LineTo(rc123.right, rc123.top);
+	//pDC->LineTo(rc123.right, rc123.bottom);
+	//pDC->LineTo(rc123.left, rc123.bottom);
+	//pDC->LineTo(rc123.left, rc123.top);
 	pDC->RoundRect(&ctBtn, { 10, 10 });
 
 	if (nn % 2){

@@ -3,8 +3,7 @@
 //
 
 #pragma once
-
-
+#include "ViewMain.h"
 // CMFCApplication1Dlg ¹ï¸Ü¤è¶ô
 class CMFCApplication1Dlg : public CDialogEx
 {
@@ -28,4 +27,6 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+
+	void Init();
 };

@@ -15,7 +15,6 @@
 // CMFCApplication1Dlg 對話方塊
 
 
-
 CMFCApplication1Dlg::CMFCApplication1Dlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CMFCApplication1Dlg::IDD, pParent)
 {
@@ -45,10 +44,17 @@ BOOL CMFCApplication1Dlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 設定小圖示
 
 	// TODO:  在此加入額外的初始設定
-
+	Init();
 	return TRUE;  // 傳回 TRUE，除非您對控制項設定焦點
 }
 
+void CMFCApplication1Dlg::Init()
+{
+	RECT rcTarget;
+	GetClientRect(&rcTarget);
+
+	new CViewMain(rcTarget, this, 1);
+}
 // 如果將最小化按鈕加入您的對話方塊，您需要下列的程式碼，
 // 以便繪製圖示。對於使用文件/檢視模式的 MFC 應用程式，
 // 框架會自動完成此作業。

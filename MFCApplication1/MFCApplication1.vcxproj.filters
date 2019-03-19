@@ -246,6 +246,9 @@
     <ClInclude Include="OpenGL\OpenGLRollingMode.h">
       <Filter>OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="ViewMain.h">
+      <Filter>原始程式檔</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MFCApplication1.cpp">
@@ -367,6 +370,9 @@
     </ClCompile>
     <ClCompile Include="OpenGL\OpenGLRollingMode.cpp">
       <Filter>OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewMain.cpp">
+      <Filter>原始程式檔</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

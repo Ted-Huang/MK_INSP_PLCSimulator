@@ -89,7 +89,7 @@ void CViewMain::OnPaint()
 {
 	CWnd::OnPaint();
 
-	CRect rc123 = { ctGL.left - 10, ctGL.top - 10, ctGL.right + 10, ctGL.bottom + 10 };
+	CRect rc123 = { ctGL.left - 15, ctGL.top - 15, ctGL.right + 15, ctGL.bottom + 15 };
 	CDC* pDC = GetDC();
 	CPen pen, backgroundpen, *oldpen, redpen, bluepen;
 	CBrush brush, *olbrush;

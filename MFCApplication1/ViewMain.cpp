@@ -13,6 +13,39 @@ const CRect ctChange = { 300, 300, 330, 330 };
 
 #define BK_COLOR_MAIN	RGB(230, 230, 230)
 
+CViewTest::CViewTest(RECT &rcTarget, CWnd *pParent, UINT ResourceId)
+{
+	Create(NULL, _T("CViewTest"), WS_CHILD | WS_VISIBLE, rcTarget, pParent, ResourceId);
+}
+
+CViewTest::~CViewTest()
+{
+
+}
+
+BEGIN_MESSAGE_MAP(CViewTest, CWnd)
+	ON_WM_PAINT()
+	ON_WM_ERASEBKGND()
+END_MESSAGE_MAP()
+
+void CViewTest::OnPaint()
+{
+	CWnd::OnPaint();
+
+	CDC* pDC = GetDC();
+	CRect rt;
+	GetClientRect(rt);
+	pDC->FillRect(rt, &CBrush(RGB(0,0,0)));
+
+}
+
+BOOL CViewTest::OnEraseBkgnd(CDC* pDC)
+{
+	//CRect rt;
+	//GetClientRect(rt);
+	//pDC->FillRect(rt, &CBrush(RGB(0,0,0)));
+	return CWnd::OnEraseBkgnd(pDC);
+}
 
 CViewMain::CViewMain(RECT &rcTarget, CWnd *pParent, UINT ResourceId)
 {
@@ -31,20 +64,22 @@ void CViewMain::Init()
 	if (m_pOgl == NULL){
 		m_pOgl = new COpenGLControl();
 
-		CRect rr = ctGL;
-		//CRect rr = {ctGL.left + 300, ctGL.top, ctGL.left+300+ctGL.Width(), ctGL.bottom};
-		m_pOgl->oglCreate(rr, this, 1231);
-		m_pOgl->oglSetBackgroundColor(::GetSysColor(COLOR_APPWORKSPACE));
-		m_pOgl->oglShowAnchorPoints(TRUE);
+		//CRect rr = ctGL;
+		CRect rr = {ctGL.left + 45, ctGL.top, ctGL.left+45+ctGL.Width(), ctGL.bottom};
+		new CViewTest(rr, this, 119);
+		//m_pOgl->oglCreate(rr, this, 1231);
+		//m_pOgl->oglSetBackgroundColor(::GetSysColor(COLOR_APPWORKSPACE));
+		//m_pOgl->oglShowAnchorPoints(TRUE);
 	}
-	IMAGE *pCur = new IMAGE;
-	CString strGoldFile;
-	strGoldFile.Format(_T("D:\\AOI_TOOL\\MK_UI\\MFCApplication1\\GOLDEN\\GOLD1.bmp"));
-	unsigned char *pGoldBuf = NULL;
-	int nW = 0, nH = 0, nC = 1;
-	loadimage(strGoldFile, &pGoldBuf, &nW, &nH, &nC, READ_DEFAULT, FALSE);
-	ImageInit(pCur, IMAGE_TYPE_MONO8, pGoldBuf, nW, nH);
+
 	if (m_pOgl){
+		IMAGE *pCur = new IMAGE;
+		CString strGoldFile;
+		strGoldFile.Format(_T("D:\\AOI_TOOL\\MK_UI\\MFCApplication1\\GOLDEN\\GOLD1.bmp"));
+		unsigned char *pGoldBuf = NULL;
+		int nW = 0, nH = 0, nC = 1;
+		loadimage(strGoldFile, &pGoldBuf, &nW, &nH, &nC, READ_DEFAULT, FALSE);
+		ImageInit(pCur, IMAGE_TYPE_MONO8, pGoldBuf, nW, nH);
 		m_pOgl->oglSetTexture(pCur);
 		m_pOgl->oglDrawScene();
 	}

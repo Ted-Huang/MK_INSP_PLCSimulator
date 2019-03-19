@@ -61,35 +61,35 @@ CViewMain::~CViewMain()
 
 void CViewMain::Init()
 {
-	//if (m_pOgl == NULL){
-	//	m_pOgl = new COpenGLControl();
+	if (m_pOgl == NULL){
+		m_pOgl = new COpenGLControl();
 
-	//	CRect rr = ctGL;
-	//	//CRect rr = {ctGL.left + 45, ctGL.top, ctGL.left+45+ctGL.Width(), ctGL.bottom};
-	//	//new CViewTest(rr, this, 119);
-	//	m_pOgl->oglCreate(rr, this, 1231);
-	//	m_pOgl->oglSetBackgroundColor(::GetSysColor(COLOR_APPWORKSPACE));
-	//	m_pOgl->oglShowAnchorPoints(TRUE);
-	//}
+		CRect rr = ctGL;
+		//CRect rr = {ctGL.left + 45, ctGL.top, ctGL.left+45+ctGL.Width(), ctGL.bottom};
+		//new CViewTest(rr, this, 119);
+		m_pOgl->oglCreate(rr, this, 1231);
+		m_pOgl->oglSetBackgroundColor(::GetSysColor(COLOR_APPWORKSPACE));
+		m_pOgl->oglShowAnchorPoints(TRUE);
+	}
 
-	//if (m_pOgl){
-	//	IMAGE *pCur = new IMAGE;
-	//	CString strGoldFile;
-	//	strGoldFile.Format(_T("D:\\AOI_TOOL\\MK_UI\\MFCApplication1\\GOLDEN\\GOLD1.bmp"));
-	//	unsigned char *pGoldBuf = NULL;
-	//	int nW = 0, nH = 0, nC = 1;
-	//	loadimage(strGoldFile, &pGoldBuf, &nW, &nH, &nC, READ_DEFAULT, FALSE);
-	//	ImageInit(pCur, IMAGE_TYPE_MONO8, pGoldBuf, nW, nH);
-	//	m_pOgl->oglSetTexture(pCur);
-	//	m_pOgl->oglDrawScene();
-	//}
+	if (m_pOgl){
+		IMAGE *pCur = new IMAGE;
+		CString strGoldFile;
+		strGoldFile.Format(_T("D:\\AOI_TOOL\\MK_UI\\MFCApplication1\\GOLDEN\\GOLD1.bmp"));
+		unsigned char *pGoldBuf = NULL;
+		int nW = 0, nH = 0, nC = 1;
+		loadimage(strGoldFile, &pGoldBuf, &nW, &nH, &nC, READ_DEFAULT, FALSE);
+		ImageInit(pCur, IMAGE_TYPE_MONO8, pGoldBuf, nW, nH);
+		m_pOgl->oglSetTexture(pCur);
+		m_pOgl->oglDrawScene();
+	}
 }
 
 void CViewMain::OnPaint()
 {
 	CWnd::OnPaint();
 
-	CRect rc123 = { ctGL.left - 5, ctGL.top - 5, ctGL.right + 10, ctGL.bottom + 10 };
+	CRect rc123 = { ctGL.left - 10, ctGL.top - 10, ctGL.right + 10, ctGL.bottom + 10 };
 	CDC* pDC = GetDC();
 	CPen pen, backgroundpen, *oldpen, redpen, bluepen;
 	CBrush brush, *olbrush;
@@ -107,39 +107,50 @@ void CViewMain::OnPaint()
 	pDC->SelectObject(redpen);
 	
 	pDC->SetArcDirection(AD_COUNTERCLOCKWISE);
-	int nRadius = 50;
-	CRect rectClient = { 0, 0, 100, 100 };
+	int nRadius = 20;
+	CRect rectClient = rc123;// { 10, 10, 110, 110 };
 	CPoint p1, p2;
-	pDC->Rectangle(rectClient);
+
 	CRect rcRightTop = { rectClient.right - nRadius, rectClient.top, rectClient.right, nRadius };
 	CRect rcRightBottom = { rectClient.right - nRadius, rectClient.bottom - nRadius, rectClient.right, rectClient.bottom };
 	CRect rcLeftBottom = { rectClient.left, rectClient.bottom - nRadius, nRadius, rectClient.bottom };
 	CRect rcLeftTop = { rectClient.left, rectClient.top, nRadius, nRadius };
-	//right top
-	p1 = { rcRightTop.right, rcRightTop.CenterPoint().y };
-	p2 = { rcRightTop.CenterPoint().x, rcRightTop.top };
-	pDC->Arc(rcRightTop, p1, p2);
-
-	//right bottom
-	p1 = { rcRightBottom.CenterPoint().x, rcRightBottom.right };
-	p2 = { rcRightBottom.right, rcRightBottom.CenterPoint().y };
-	pDC->Arc(rcRightBottom, p1, p2);
-	
-
-	//left bottom
-	p1 = { rcLeftBottom.left, rcLeftBottom.CenterPoint().y };
-	p2 = { rcLeftBottom.CenterPoint().x, rcLeftBottom.bottom };
-	pDC->Arc(rcLeftBottom, p1, p2);
 
 	//left top 
 	p1 = { rcLeftTop.CenterPoint().x, rcLeftTop.top };
 	p2 = { rcLeftTop.left, rcLeftTop.CenterPoint().y };
-	pDC->Arc(rcLeftTop, p1, p2);
+	pDC->MoveTo(p1.x, p1.y); //first 
+	pDC->ArcTo(rcLeftTop, p1, p2);
+
+
+	//left bottom
+	p1 = { rcLeftBottom.left, rcLeftBottom.CenterPoint().y };
+	p2 = { rcLeftBottom.CenterPoint().x, rcLeftBottom.bottom };
+	pDC->LineTo(p1.x, p1.y);
+	pDC->ArcTo(rcLeftBottom, p1, p2);
+	
+	//right bottom
+	p1 = { rcRightBottom.CenterPoint().x, rcRightBottom.right };
+	p2 = { rcRightBottom.right, rcRightBottom.CenterPoint().y };
+	pDC->LineTo(p1.x, p1.y);
+	pDC->ArcTo(rcRightBottom, p1, p2);
+
+	//right top
+	p1 = { rcRightTop.right, rcRightTop.CenterPoint().y };
+	p2 = { rcRightTop.CenterPoint().x, rcRightTop.top };
+	pDC->LineTo(p1.x, p1.y);
+	pDC->ArcTo(rcRightTop, p1, p2);
+
+	p1 = { rcLeftTop.CenterPoint().x, rcLeftTop.top };
+	pDC->LineTo(p1.x, p1.y);
+
+
+
+
 
 
 	pDC->SelectObject(&pen);
 
-	pDC->SelectObject(&pen);
 	//pDC->RoundRect(&rc123, { 10, 10 });
 	//pDC->Rectangle(rc123);
 
@@ -152,7 +163,6 @@ void CViewMain::OnPaint()
 
 	if (nn % 2){
 		pDC->SelectObject(redpen);
-		//pDC->RoundRect(&ctChange, { 10, 10 });
 	}
 	else{
 		pDC->SelectObject(bluepen);

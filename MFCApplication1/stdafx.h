@@ -33,11 +33,30 @@
 
 #include <afxcontrolbars.h>     // 功能區和控制列的 MFC 支援
 
+#pragma comment(lib, "glu32.lib")
+#pragma comment(lib, "opengl32.lib")
+#define SUPPORT_GL_FONT
+#ifdef SUPPORT_GL_FONT
+#ifdef _WIN64
+#pragma comment(lib, "..\\Share\\freetype2\\x64\\freetype2410MT.lib")
+#else
+#pragma comment(lib, "..\\Share\\freetype2\\win32\\freetype2410MT.lib")
+#endif
+#endif //SUPPORT_GL_FONT
+
+#define MAX_XLAYOUT	4
+#define MAX_YLAYOUT 8
+#define MAX_ANCHORS MAX_XLAYOUT*MAX_YLAYOUT*2
 
 
-
-
-
+enum BoundedType
+{
+	TYPE_NONE,
+	TYPE_NORMAL,
+	TYPE_POLYGON,
+	TYPE_REGION,
+	TYPE_INSPREGION,
+};
 
 
 

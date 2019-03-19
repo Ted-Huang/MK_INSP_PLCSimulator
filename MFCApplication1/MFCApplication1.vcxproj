@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
+    <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
+    <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -16,14 +16,14 @@
     <Keyword>MFCProj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Static</UseOfMfc>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
@@ -34,34 +34,37 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;FTGL_LIBRARY_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)\OpenGL\glew\;$(ProjectDir)\OpenGL\FTGL\;$(ProjectDir)\OpenGL;$(PYLON_DEV_DIR)\include;$(ProjectDir)\..\Share\FreeType2;$(ProjectDir)\;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>libfftw3f-3.lib;uafxcwd.lib;Libcmtd.lib;comsuppwd.lib;glu32.lib;iphlpapi.lib</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>libcd.lib;msvcrtd.lib;LIBCMT.lib;uafxcwd.lib;Libcmtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>$(PYLON_DEV_DIR)\lib\x64;$(ProjectDir)\INSP\fftw3;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
-      <ValidateAllParameters>true</ValidateAllParameters>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </Midl>
     <ResourceCompile>
@@ -70,7 +73,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -88,7 +91,6 @@
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
-      <ValidateAllParameters>true</ValidateAllParameters>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </Midl>
     <ResourceCompile>
@@ -101,18 +103,172 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Share\SysUtil.h" />
     <ClInclude Include="MFCApplication1.h" />
     <ClInclude Include="MFCApplication1Dlg.h" />
+    <ClInclude Include="OpenGL\ftgl\config.h" />
+    <ClInclude Include="OpenGL\ftgl\FTCharmap.h" />
+    <ClInclude Include="OpenGL\ftgl\FTCharToGlyphIndexMap.h" />
+    <ClInclude Include="OpenGL\ftgl\FTContour.h" />
+    <ClInclude Include="OpenGL\ftgl\FTFace.h" />
+    <ClInclude Include="OpenGL\ftgl\FTFont\FTBitmapFontImpl.h" />
+    <ClInclude Include="OpenGL\ftgl\FTFont\FTBufferFontImpl.h" />
+    <ClInclude Include="OpenGL\ftgl\FTFont\FTExtrudeFontImpl.h" />
+    <ClInclude Include="OpenGL\ftgl\FTFont\FTFontImpl.h" />
+    <ClInclude Include="OpenGL\ftgl\FTFont\FTOutlineFontImpl.h" />
+    <ClInclude Include="OpenGL\ftgl\FTFont\FTPixmapFontImpl.h" />
+    <ClInclude Include="OpenGL\ftgl\FTFont\FTPolygonFontImpl.h" />
+    <ClInclude Include="OpenGL\ftgl\FTFont\FTTextureFontImpl.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGlyphContainer.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGlyph\FTBitmapGlyphImpl.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGlyph\FTBufferGlyphImpl.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGlyph\FTExtrudeGlyphImpl.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGlyph\FTGlyphImpl.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGlyph\FTOutlineGlyphImpl.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGlyph\FTPixmapGlyphImpl.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGlyph\FTPolygonGlyphImpl.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGlyph\FTTextureGlyphImpl.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTBBox.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTBitmapGlyph.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTBuffer.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTBufferFont.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTBufferGlyph.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTExtrdGlyph.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTFont.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\ftgl.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTGLBitmapFont.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTGLExtrdFont.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTGLOutlineFont.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTGLPixmapFont.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTGLPolygonFont.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTGLTextureFont.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTGlyph.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTLayout.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTOutlineGlyph.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTPixmapGlyph.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTPoint.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTPolyGlyph.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTSimpleLayout.h" />
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTTextureGlyph.h" />
+    <ClInclude Include="OpenGL\ftgl\FTInternals.h" />
+    <ClInclude Include="OpenGL\ftgl\FTLayout\FTLayoutImpl.h" />
+    <ClInclude Include="OpenGL\ftgl\FTLayout\FTSimpleLayoutImpl.h" />
+    <ClInclude Include="OpenGL\ftgl\FTLibrary.h" />
+    <ClInclude Include="OpenGL\ftgl\FTList.h" />
+    <ClInclude Include="OpenGL\ftgl\FTSize.h" />
+    <ClInclude Include="OpenGL\ftgl\FTUnicode.h" />
+    <ClInclude Include="OpenGL\ftgl\FTVector.h" />
+    <ClInclude Include="OpenGL\ftgl\FTVectoriser.h" />
+    <ClInclude Include="OpenGL\glew\GL\glew.h" />
+    <ClInclude Include="OpenGL\glew\GL\wglew.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SharedComponent.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Share\SysUtil.cpp" />
     <ClCompile Include="MFCApplication1.cpp" />
     <ClCompile Include="MFCApplication1Dlg.cpp" />
+    <ClCompile Include="OpenGL\ftgl\FTBuffer.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTCharmap.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTContour.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTFace.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTFont\FTBitmapFont.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTFont\FTBufferFont.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTFont\FTExtrudeFont.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTFont\FTFont.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTFont\FTFontGlue.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTFont\FTOutlineFont.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTFont\FTPixmapFont.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTFont\FTPolygonFont.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTFont\FTTextureFont.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTGlyphContainer.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTGlyph\FTBitmapGlyph.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTGlyph\FTBufferGlyph.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTGlyph\FTExtrudeGlyph.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTGlyph\FTGlyph.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTGlyph\FTGlyphGlue.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTGlyph\FTOutlineGlyph.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTGlyph\FTPixmapGlyph.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTGlyph\FTPolygonGlyph.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTGlyph\FTTextureGlyph.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTLayout\FTLayout.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTLayout\FTLayoutGlue.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTLayout\FTSimpleLayout.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTLibrary.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTPoint.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTSize.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTVectoriser.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="OpenGL\glew\glew.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="SharedComponent.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

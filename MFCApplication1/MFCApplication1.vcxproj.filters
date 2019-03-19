@@ -13,6 +13,33 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Share">
+      <UniqueIdentifier>{140c0930-bbba-49e1-b86a-bae6483caebe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenGL">
+      <UniqueIdentifier>{641ff029-78ee-4b65-99ab-b349829784ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenGL\glew">
+      <UniqueIdentifier>{79e378ed-6351-4141-814b-125dfb9e4051}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenGL\glew\GL">
+      <UniqueIdentifier>{abbf149c-1785-4372-88df-abb11290a863}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenGL\ftgl">
+      <UniqueIdentifier>{e7d4daa9-3ead-48c7-8426-5380df667a83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenGL\ftgl\FTFont">
+      <UniqueIdentifier>{079fc082-7498-4946-8706-038feacbdebe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenGL\ftgl\FTGL">
+      <UniqueIdentifier>{203db493-e9b1-4cbb-ba34-a4182defa4ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenGL\ftgl\FTGlyph">
+      <UniqueIdentifier>{091d7978-4287-49a2-868b-b797b7e7e7d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OpenGL\ftgl\FTLayout">
+      <UniqueIdentifier>{40f54698-fe2c-41fc-b9be-f55eb4d13242}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -33,6 +60,177 @@
     <ClInclude Include="Resource.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
+    <ClInclude Include="SharedComponent.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Share\SysUtil.h">
+      <Filter>Share</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\glew\GL\glew.h">
+      <Filter>OpenGL\glew\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\glew\GL\wglew.h">
+      <Filter>OpenGL\glew\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTVectoriser.h">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\config.h">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTCharmap.h">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTCharToGlyphIndexMap.h">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTContour.h">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTFace.h">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGlyphContainer.h">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTInternals.h">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTLibrary.h">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTList.h">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTSize.h">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTUnicode.h">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTVector.h">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTFont\FTBitmapFontImpl.h">
+      <Filter>OpenGL\ftgl\FTFont</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTFont\FTBufferFontImpl.h">
+      <Filter>OpenGL\ftgl\FTFont</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTFont\FTExtrudeFontImpl.h">
+      <Filter>OpenGL\ftgl\FTFont</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTFont\FTFontImpl.h">
+      <Filter>OpenGL\ftgl\FTFont</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTFont\FTOutlineFontImpl.h">
+      <Filter>OpenGL\ftgl\FTFont</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTFont\FTPixmapFontImpl.h">
+      <Filter>OpenGL\ftgl\FTFont</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTFont\FTPolygonFontImpl.h">
+      <Filter>OpenGL\ftgl\FTFont</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTFont\FTTextureFontImpl.h">
+      <Filter>OpenGL\ftgl\FTFont</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTBBox.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTBitmapGlyph.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTBuffer.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTBufferFont.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTBufferGlyph.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTExtrdGlyph.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTFont.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\ftgl.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTGLBitmapFont.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTGLExtrdFont.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTGLOutlineFont.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTGLPixmapFont.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTGLPolygonFont.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTGLTextureFont.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTGlyph.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTLayout.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTOutlineGlyph.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTPixmapGlyph.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTPoint.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTPolyGlyph.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTSimpleLayout.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGL\FTTextureGlyph.h">
+      <Filter>OpenGL\ftgl\FTGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGlyph\FTBitmapGlyphImpl.h">
+      <Filter>OpenGL\ftgl\FTGlyph</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGlyph\FTBufferGlyphImpl.h">
+      <Filter>OpenGL\ftgl\FTGlyph</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGlyph\FTExtrudeGlyphImpl.h">
+      <Filter>OpenGL\ftgl\FTGlyph</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGlyph\FTGlyphImpl.h">
+      <Filter>OpenGL\ftgl\FTGlyph</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGlyph\FTOutlineGlyphImpl.h">
+      <Filter>OpenGL\ftgl\FTGlyph</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGlyph\FTPixmapGlyphImpl.h">
+      <Filter>OpenGL\ftgl\FTGlyph</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGlyph\FTPolygonGlyphImpl.h">
+      <Filter>OpenGL\ftgl\FTGlyph</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTGlyph\FTTextureGlyphImpl.h">
+      <Filter>OpenGL\ftgl\FTGlyph</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTLayout\FTLayoutImpl.h">
+      <Filter>OpenGL\ftgl\FTLayout</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\ftgl\FTLayout\FTSimpleLayoutImpl.h">
+      <Filter>OpenGL\ftgl\FTLayout</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MFCApplication1.cpp">
@@ -43,6 +241,105 @@
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>原始程式檔</Filter>
+    </ClCompile>
+    <ClCompile Include="SharedComponent.cpp">
+      <Filter>原始程式檔</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Share\SysUtil.cpp">
+      <Filter>Share</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTBuffer.cpp">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTCharmap.cpp">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTContour.cpp">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTFace.cpp">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTGlyphContainer.cpp">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTLibrary.cpp">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTPoint.cpp">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTSize.cpp">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTVectoriser.cpp">
+      <Filter>OpenGL\ftgl</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTFont\FTBitmapFont.cpp">
+      <Filter>OpenGL\ftgl\FTFont</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTFont\FTBufferFont.cpp">
+      <Filter>OpenGL\ftgl\FTFont</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTFont\FTExtrudeFont.cpp">
+      <Filter>OpenGL\ftgl\FTFont</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTFont\FTFont.cpp">
+      <Filter>OpenGL\ftgl\FTFont</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTFont\FTFontGlue.cpp">
+      <Filter>OpenGL\ftgl\FTFont</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTFont\FTOutlineFont.cpp">
+      <Filter>OpenGL\ftgl\FTFont</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTFont\FTPixmapFont.cpp">
+      <Filter>OpenGL\ftgl\FTFont</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTFont\FTPolygonFont.cpp">
+      <Filter>OpenGL\ftgl\FTFont</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTFont\FTTextureFont.cpp">
+      <Filter>OpenGL\ftgl\FTFont</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTGlyph\FTBitmapGlyph.cpp">
+      <Filter>OpenGL\ftgl\FTGlyph</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTGlyph\FTBufferGlyph.cpp">
+      <Filter>OpenGL\ftgl\FTGlyph</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTGlyph\FTExtrudeGlyph.cpp">
+      <Filter>OpenGL\ftgl\FTGlyph</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTGlyph\FTGlyph.cpp">
+      <Filter>OpenGL\ftgl\FTGlyph</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTGlyph\FTGlyphGlue.cpp">
+      <Filter>OpenGL\ftgl\FTGlyph</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTGlyph\FTOutlineGlyph.cpp">
+      <Filter>OpenGL\ftgl\FTGlyph</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTGlyph\FTPixmapGlyph.cpp">
+      <Filter>OpenGL\ftgl\FTGlyph</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTGlyph\FTPolygonGlyph.cpp">
+      <Filter>OpenGL\ftgl\FTGlyph</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTGlyph\FTTextureGlyph.cpp">
+      <Filter>OpenGL\ftgl\FTGlyph</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTLayout\FTLayout.cpp">
+      <Filter>OpenGL\ftgl\FTLayout</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTLayout\FTLayoutGlue.cpp">
+      <Filter>OpenGL\ftgl\FTLayout</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\ftgl\FTLayout\FTSimpleLayout.cpp">
+      <Filter>OpenGL\ftgl\FTLayout</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\glew\glew.c">
+      <Filter>OpenGL\glew</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

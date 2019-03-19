@@ -71,8 +71,8 @@ void CViewMain::OnPaint()
 
 
 	pDC->SelectObject(&pen);
-	pDC->RoundRect(&rc123, { 10, 10 });
-
+	//pDC->RoundRect(&rc123, { 10, 10 });
+	pDC->Rectangle(rc123);
 
 	pDC->RoundRect(&ctBtn, { 10, 10 });
 
@@ -94,9 +94,9 @@ void CViewMain::OnPaint()
 }
 BOOL CViewMain::OnEraseBkgnd(CDC* pDC)
 {
-	CRect rt;
-	GetClientRect(rt);
-	pDC->FillRect(rt, &CBrush(BK_COLOR_MAIN));
+	//CRect rt;
+	//GetClientRect(rt);
+	//pDC->FillRect(rt, &CBrush(BK_COLOR_MAIN));
 	return CWnd::OnEraseBkgnd(pDC);
 }
 BEGIN_MESSAGE_MAP(CViewMain, CWnd)

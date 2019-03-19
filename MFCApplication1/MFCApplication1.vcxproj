@@ -165,6 +165,7 @@
     <ClInclude Include="OpenGL\MyTracker.h" />
     <ClInclude Include="OpenGL\OpenGLControl.h" />
     <ClInclude Include="OpenGL\OpenGLRollingMode.h" />
+    <ClInclude Include="OpenGL\OpenGLSegmentation.h" />
     <ClInclude Include="OpenGL\share_shadow.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SharedComponent.h" />
@@ -273,6 +274,7 @@
     <ClCompile Include="OpenGL\MyTracker.cpp" />
     <ClCompile Include="OpenGL\OpenGLControl.cpp" />
     <ClCompile Include="OpenGL\OpenGLRollingMode.cpp" />
+    <ClCompile Include="OpenGL\OpenGLSegmentation.cpp" />
     <ClCompile Include="SharedComponent.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>

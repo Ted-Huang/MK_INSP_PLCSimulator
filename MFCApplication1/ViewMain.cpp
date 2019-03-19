@@ -5,7 +5,7 @@
 #include "AoiBaseOp.h"
 
 static int nn = 0;
-const CRect ctGL = { 10, 10, 110, 110 };
+const CRect ctGL = { 60, 50, 190, 150 };
 
 const CRect ctBtn = { 200, 200, 250, 250 };
 
@@ -111,11 +111,11 @@ void CViewMain::OnPaint()
 	CRect rectClient = rc123;// { 10, 10, 110, 110 };
 	CPoint p1, p2;
 
-	CRect rcRightTop = { rectClient.right - nRadius, rectClient.top, rectClient.right, nRadius };
-	CRect rcRightBottom = { rectClient.right - nRadius, rectClient.bottom - nRadius, rectClient.right, rectClient.bottom };
-	CRect rcLeftBottom = { rectClient.left, rectClient.bottom - nRadius, nRadius, rectClient.bottom };
-	CRect rcLeftTop = { rectClient.left, rectClient.top, nRadius, nRadius };
-
+	CRect rcRightTop = CRect(rectClient.right - nRadius, rectClient.top, rectClient.right, rectClient.top + nRadius);
+	CRect rcRightBottom = CRect(rectClient.right - nRadius, rectClient.bottom - nRadius, rectClient.right, rectClient.bottom);
+	CRect rcLeftBottom = CRect(rectClient.left, rectClient.bottom - nRadius, rectClient.left + nRadius, rectClient.bottom);
+	CRect rcLeftTop = CRect(rectClient.left, rectClient.top, rectClient.left + nRadius, rectClient.top + nRadius);
+	//pDC->Rectangle(rectClient);
 	//left top 
 	p1 = { rcLeftTop.CenterPoint().x, rcLeftTop.top };
 	p2 = { rcLeftTop.left, rcLeftTop.CenterPoint().y };
@@ -123,14 +123,14 @@ void CViewMain::OnPaint()
 	pDC->ArcTo(rcLeftTop, p1, p2);
 
 
-	//left bottom
+	////left bottom
 	p1 = { rcLeftBottom.left, rcLeftBottom.CenterPoint().y };
 	p2 = { rcLeftBottom.CenterPoint().x, rcLeftBottom.bottom };
 	pDC->LineTo(p1.x, p1.y);
 	pDC->ArcTo(rcLeftBottom, p1, p2);
-	
+	//
 	//right bottom
-	p1 = { rcRightBottom.CenterPoint().x, rcRightBottom.right };
+	p1 = { rcRightBottom.CenterPoint().x, rcRightBottom.bottom };
 	p2 = { rcRightBottom.right, rcRightBottom.CenterPoint().y };
 	pDC->LineTo(p1.x, p1.y);
 	pDC->ArcTo(rcRightBottom, p1, p2);

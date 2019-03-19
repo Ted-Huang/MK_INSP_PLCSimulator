@@ -231,6 +231,21 @@
     <ClInclude Include="OpenGL\ftgl\FTLayout\FTSimpleLayoutImpl.h">
       <Filter>OpenGL\ftgl\FTLayout</Filter>
     </ClInclude>
+    <ClInclude Include="OpenGL\share_shadow.h">
+      <Filter>OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\LineTracker.h">
+      <Filter>OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\MyTracker.h">
+      <Filter>OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\OpenGLControl.h">
+      <Filter>OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\OpenGLRollingMode.h">
+      <Filter>OpenGL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MFCApplication1.cpp">
@@ -340,6 +355,18 @@
     </ClCompile>
     <ClCompile Include="OpenGL\glew\glew.c">
       <Filter>OpenGL\glew</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\LineTracker.cpp">
+      <Filter>OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\MyTracker.cpp">
+      <Filter>OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\OpenGLControl.cpp">
+      <Filter>OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\OpenGLRollingMode.cpp">
+      <Filter>OpenGL</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
